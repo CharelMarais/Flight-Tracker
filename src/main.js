@@ -2,6 +2,7 @@ import "./styles.scss";
 import { getFlightInfo } from "./services/flight-service.js";
 
 var map = L.map("map").setView([-35, 25], 2);
+var marker = L.marker([-35, 25]).addTo(map);
 L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
   maxZoom: 19,
   attribution:
@@ -9,9 +10,11 @@ L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
 }).addTo(map);
 
 function viewButtonCreateMapOfClicked(event, fltInfo) {
+  const mapElement = document.getElementById("map");
+
   if (event.target.innerText === "CLOSE") {
     // If button has already been clicked
-    map.removeLayer(marker);
+    mapElement.style.visibility = "hidden";
     event.target.innerText = "view";
     const openButtons = document.querySelectorAll(".view-button");
     openButtons.forEach((buttonOpen) => {
@@ -20,6 +23,7 @@ function viewButtonCreateMapOfClicked(event, fltInfo) {
     map.flyTo([-35, 23], 2);
   } else {
     // if a button is still to be clicked
+    mapElement.style.visibility = "visible";
     event.target.innerText = "close";
     const closeButtons = document.querySelectorAll(".view-button");
     closeButtons.forEach((buttonClose) => {
@@ -27,8 +31,8 @@ function viewButtonCreateMapOfClicked(event, fltInfo) {
         buttonClose.parentNode.classList.add("hidden");
       }
     });
-    map.flyTo([fltInfo[6], fltInfo[5]], 6);
-    L.marker([fltInfo[6], fltInfo[5]]).addTo(map);
+    map.flyTo([fltInfo[6], fltInfo[5]], 7);
+    marker.setLatLng([fltInfo[6], fltInfo[5]]);
   }
 }
 
