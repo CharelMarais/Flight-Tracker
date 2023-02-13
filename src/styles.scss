@@ -23,7 +23,6 @@ body {
 
   .heading {
     height: fit-content;
-    grid-row-start: 1;
     display: flex;
     background-color: $primary-bg-color;
 
@@ -64,8 +63,6 @@ body {
 
     .flight-track {
       display: grid;
-      // width: 100%;
-      // margin-right: 5rem; ------------------------------Media
       grid-template-columns: 3rem 4rem 3.5rem auto;
       grid-template-rows: repeat(2, auto);
       gap: 0;
@@ -108,6 +105,10 @@ body {
           padding-left: 4px;
           padding-bottom: 4px;
         }
+
+        .flight-location {
+          margin: auto;
+        }
       }
 
       h2 {
@@ -129,6 +130,9 @@ body {
           grid-template-columns: repeat(4, 1fr);
           font-weight: 100;
           font-size: 0.8rem;
+          .media {
+            display: none;
+          }
         }
 
         #flights-info {
@@ -152,7 +156,13 @@ body {
             grid-template-columns: repeat(4, 1fr);
             padding: 2px 0;
 
+            .media {
+              display: none;
+            }
+
             button {
+              font-weight: bold;
+              text-align: start;
               border: none;
               padding: 0;
             }
@@ -177,6 +187,98 @@ body {
         visibility: hidden;
         height: 100%;
         width: 100%;
+      }
+    }
+  }
+}
+
+@media screen and (min-width: 480px) {
+  #container {
+    .heading {
+      .flight-track {
+        flex-grow: 1;
+        margin-right: 5rem;
+      }
+    }
+    .content {
+      font-size: 1.1rem;
+      .active-flights {
+        .flights {
+          .flight-headings {
+            grid-template-columns: repeat(5, 1fr);
+            .m {
+              grid-column-start: 5;
+              display: contents;
+            }
+          }
+          #flights-info {
+            .single-flight {
+              font-size: 0.9rem;
+              grid-template-columns: repeat(5, 1fr);
+              .m {
+                grid-column-start: 5;
+                display: contents;
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+@media screen and (min-width: 769px) {
+  #container {
+    .content {
+      font-size: 1.2rem;
+      .active-flights {
+        .flights {
+          .flight-headings {
+            font-size: 0.9rem;
+            grid-template-columns: repeat(6, 1fr);
+            .l {
+              display: contents;
+              grid-column-start: 6;
+            }
+          }
+          #flights-info {
+            .single-flight {
+              font-size: 1rem;
+              grid-template-columns: repeat(6, 1fr);
+              .l {
+                display: contents;
+                grid-column-start: 8;
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
+@media screen and (min-width: 1024px) {
+  #container {
+    .content {
+      font-size: 1.2rem;
+      .active-flights {
+        .flights {
+          .flight-headings {
+            font-size: 0.9rem;
+            grid-template-columns: repeat(7, 1fr);
+            .f {
+              display: contents;
+            }
+          }
+          #flights-info {
+            .single-flight {
+              font-size: 1rem;
+              grid-template-columns: repeat(7, 1fr);
+              .f {
+                display: contents;
+              }
+            }
+          }
+        }
       }
     }
   }
