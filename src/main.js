@@ -12,9 +12,8 @@ getFlightInfo()
   .then((res) => res.json())
   .then((responseJSON) => {
     for (let flight of responseJSON.states) {
-      if (flight[2] === "South Africa") {
-        const flightInfo = document.getElementById("flights-info");
-        flightInfo.innerHTML += `
+      const flightInfo = document.getElementById("flights-info");
+      flightInfo.innerHTML += `
           <div class="single-flight">
               <span>${flight[1] === "" ? "None" : flight[1]}</span>
               <span class="media f">${
@@ -28,8 +27,7 @@ getFlightInfo()
               }m</span>
               <button id="${flight[1]}" class ="view-button">view</button>
             </div>`;
-        flightsInfoArray[flightsInfoArray.length] = flight;
-      }
+      flightsInfoArray[flightsInfoArray.length] = flight;
     }
     const viewButtons = document.querySelectorAll(".view-button");
     viewButtons.forEach((button) => {
@@ -40,4 +38,7 @@ getFlightInfo()
     });
   })
   .catch((error) => console.error(error))
-  .finally(() => {});
+  .finally(() => {
+    const loadScreen = document.getElementById("loading");
+    loadScreen.style.animationName = "loadAnime";
+  });

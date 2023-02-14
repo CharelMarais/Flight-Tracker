@@ -4,6 +4,28 @@ $screen-bg-color: #36312e;
 $screen-border-color: #171214;
 $screen-font-color: #faf755;
 
+@keyframes flight {
+  from {
+    transform: rotate(0deg) translate(4.5rem);
+  }
+  to {
+    transform: rotate(-360deg) translate(4.5rem);
+  }
+}
+
+@keyframes loadAnime {
+  from {
+    width: 100%;
+    height: 100%;
+  }
+  to {
+    width: 11rem;
+    height: 11rem;
+    background-color: transparent;
+    border-radius: 50%;
+  }
+}
+
 html,
 body {
   margin: 0;
@@ -27,38 +49,8 @@ body {
     background-color: $primary-bg-color;
 
     .logo {
-      @keyframes flight {
-        from {
-          transform: rotate(0deg) translate(4.5rem);
-        }
-        to {
-          transform: rotate(-360deg) translate(4.5rem);
-        }
-      }
-
-      display: grid;
-      justify-content: center;
-      align-content: center;
       width: 11rem;
       height: 11rem;
-
-      & * {
-        grid-column: 1;
-        grid-row: 1;
-        color: whitesmoke;
-      }
-      .plane {
-        position: relative;
-        top: 3rem;
-        left: 3rem;
-        font-size: 2rem;
-        animation-name: flight;
-        animation-duration: 8s;
-        animation-iteration-count: infinite;
-      }
-      .earth {
-        font-size: 8rem;
-      }
     }
 
     .flight-track {
@@ -192,6 +184,46 @@ body {
   }
 }
 
+#loading {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: $primary-bg-color;
+  animation-name: loadAnime;
+  animation-duration: 3s;
+  animation-fill-mode: forwards;
+
+  .spinner {
+    display: grid;
+    justify-content: center;
+    align-content: center;
+    width: 11rem;
+    height: 11rem;
+
+    & > * {
+      grid-column: 1;
+      grid-row: 1;
+    }
+    .loading-plane {
+      position: relative;
+      top: 3rem;
+      left: 3rem;
+      font-size: 2rem;
+      animation-name: flight;
+      animation-duration: 8s;
+      animation-iteration-count: infinite;
+    }
+    .loading-earth {
+      font-size: 8rem;
+    }
+  }
+}
+
 @media screen and (min-width: 480px) {
   #container {
     .heading {
@@ -207,7 +239,6 @@ body {
           .flight-headings {
             grid-template-columns: repeat(5, 1fr);
             .m {
-              grid-column-start: 5;
               display: contents;
             }
           }
@@ -216,7 +247,6 @@ body {
               font-size: 0.9rem;
               grid-template-columns: repeat(5, 1fr);
               .m {
-                grid-column-start: 5;
                 display: contents;
               }
             }
@@ -238,7 +268,6 @@ body {
             grid-template-columns: repeat(6, 1fr);
             .l {
               display: contents;
-              grid-column-start: 6;
             }
           }
           #flights-info {
@@ -247,7 +276,6 @@ body {
               grid-template-columns: repeat(6, 1fr);
               .l {
                 display: contents;
-                grid-column-start: 8;
               }
             }
           }
@@ -256,6 +284,7 @@ body {
     }
   }
 }
+
 @media screen and (min-width: 1024px) {
   #container {
     .content {

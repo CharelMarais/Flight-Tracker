@@ -71,7 +71,7 @@ export function viewButtonCreateMapOfClicked(event, fltInfo) {
         buttonClose.parentNode.classList.add("hidden");
       }
     });
-    map.flyTo([fltInfo[6], fltInfo[5]], 9);
+    map.flyTo([fltInfo[6], fltInfo[5]], 10);
     marker.setLatLng([fltInfo[6], fltInfo[5]]);
   }
 }
