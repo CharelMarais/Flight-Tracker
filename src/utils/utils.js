@@ -1,15 +1,3 @@
-import { map, marker } from "../services/leaflet-service";
-
-export function getRelatedButtonFlightInfo(btnId, relatedInfoArr) {
-  let info;
-  relatedInfoArr.map((arrItem) => {
-    if (arrItem[1] === btnId) {
-      info = arrItem;
-    }
-  });
-  return info;
-}
-
 export function calculateDirection(deg) {
   switch (true) {
     case deg < 11.25:
@@ -46,32 +34,5 @@ export function calculateDirection(deg) {
       return "NNW";
     case deg < 360:
       return "N";
-  }
-}
-
-export function viewButtonCreateMapOfClicked(event, fltInfo) {
-  const mapElement = document.getElementById("map");
-
-  if (event.target.innerText === "CLOSE") {
-    // If button has already been clicked
-    mapElement.style.visibility = "hidden";
-    event.target.innerText = "view";
-    const openButtons = document.querySelectorAll(".view-button");
-    openButtons.forEach((buttonOpen) => {
-      buttonOpen.parentNode.classList.remove("hidden");
-    });
-    map.flyTo([-35, 23], 2);
-  } else {
-    // if a button is clicked
-    mapElement.style.visibility = "visible";
-    event.target.innerText = "close";
-    const closeButtons = document.querySelectorAll(".view-button");
-    closeButtons.forEach((buttonClose) => {
-      if (buttonClose.id !== event.target.id) {
-        buttonClose.parentNode.classList.add("hidden");
-      }
-    });
-    map.flyTo([fltInfo[6], fltInfo[5]], 10);
-    marker.setLatLng([fltInfo[6], fltInfo[5]]);
   }
 }

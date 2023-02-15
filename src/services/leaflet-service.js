@@ -1,15 +1,32 @@
-export var map = L.map("map").setView([-35, 25], 2);
-var MyIcon = L.icon({
-  iconUrl: "../../assets/img/icons8-plane-24.png",
-  iconSize: [25, 25],
-  iconAnchor: [25, 25],
-  popupAnchor: [1, -34],
-  tooltipAnchor: [16, -28],
-  shadowSize: [41, 41],
+export const map = L.map("map").setView([-35, 25], 2);
+
+const planeIcon = document.createElement("div");
+planeIcon.id = "plane-icon";
+planeIcon.innerHTML = `<img src="../../assets/img/icons8-plane-24.png" alt="plane icon">`;
+planeIcon.style["transform-origin"] = "center";
+const divIcon = L.divIcon({
+  html: planeIcon,
+  iconSize: [24, 24],
+  className: "plane-icon",
 });
-export var marker = L.marker([-35, 25], { icon: MyIcon }).addTo(map);
+
+export const marker = L.marker([-35, 25], { icon: divIcon }).addTo(map);
 L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
   maxZoom: 19,
   attribution:
     '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>',
 }).addTo(map);
+
+export function resetMapLocationView() {
+  map.flyTo([-35, 23], 2);
+}
+
+export function setMapAndMarkerToCurrentFlightLocation(
+  lat = 0,
+  lon = 0,
+  heading = 0
+) {
+  map.flyTo([lat, lon], 10);
+  marker.setLatLng([lat, lon]);
+  planeIcon.style.transform = `rotate(${heading - 90}deg)`;
+}
