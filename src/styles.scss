@@ -63,6 +63,8 @@ html {
 
       & * {
         margin: 0;
+        font-size: 2rem;
+        font-weight: 600;
       }
 
       .flight-heading {
@@ -105,7 +107,7 @@ html {
         }
       }
 
-      h2 {
+      h1 {
         align-self: flex-start;
         font-weight: 100;
         margin: 0;
@@ -161,6 +163,7 @@ html {
               text-align: start;
               border: none;
               padding: 0;
+              cursor: pointer;
             }
           }
 
@@ -250,7 +253,7 @@ html {
         .flights {
           .flight-headings {
             grid-template-columns: repeat(5, 1fr);
-            .m {
+            .medium-screen-size {
               display: contents;
             }
           }
@@ -258,7 +261,7 @@ html {
             .single-flight {
               font-size: 0.9rem;
               grid-template-columns: repeat(5, 1fr);
-              .m {
+              .medium-screen-size {
                 display: contents;
               }
             }
@@ -278,7 +281,7 @@ html {
           .flight-headings {
             font-size: 0.9rem;
             grid-template-columns: repeat(6, 1fr);
-            .l {
+            .large-screen-size {
               display: contents;
             }
           }
@@ -286,7 +289,7 @@ html {
             .single-flight {
               font-size: 1rem;
               grid-template-columns: repeat(6, 1fr);
-              .l {
+              .large-screen-size {
                 display: contents;
               }
             }
@@ -306,7 +309,7 @@ html {
           .flight-headings {
             font-size: 0.9rem;
             grid-template-columns: repeat(7, 1fr);
-            .f {
+            .full-screen {
               display: contents;
             }
           }
@@ -314,7 +317,7 @@ html {
             .single-flight {
               font-size: 1rem;
               grid-template-columns: repeat(7, 1fr);
-              .f {
+              .full-screen {
                 display: contents;
               }
             }

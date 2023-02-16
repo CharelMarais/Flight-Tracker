@@ -2,7 +2,10 @@ import {
   resetMapLocationView,
   setMapAndMarkerToCurrentFlightLocation,
 } from "./services/leaflet-service";
-import { calculateDirection } from "./utils/utils.js";
+import {
+  calculateDirection,
+  convertMeterPerSecondToKilomentersPerHour,
+} from "./utils/utils.js";
 
 export function appendFlightInformationToFlightInfoContainer(flight) {
   const flightInfo = document.getElementById("flights-info");
@@ -10,12 +13,18 @@ export function appendFlightInformationToFlightInfoContainer(flight) {
     flightInfo.innerHTML += `
           <div class="single-flight">
               <span>${flight[1] || "None"}</span>
-              <span class="media f">${flight[11] ?? 0.0}m/s</span>
+              <span class="media full-screen">${convertMeterPerSecondToKilomentersPerHour(
+                flight[11] ?? 0.0
+              )}m/s</span>
               <span>${flight[9] ?? 0}m/s</span>
-              <span class="media m">${calculateDirection(flight[10])}</span>
+              <span class="media medium-screen-size">${calculateDirection(
+                flight[10]
+              )}</span>
               <span>${flight[10] ?? 0}°</span>
-              <span class="media l">${flight[7] ?? 0.0}m</span>
-              <button id="${flight[1]}" class="view-button">view</button>
+              <span class="media large-screen-size">${flight[7] ?? 0.0}m</span>
+              <button id="${
+                flight[1]
+              }" class="view-button">track flight</button>
             </div>`;
   }
 }
@@ -42,7 +51,7 @@ function toggleFlightFocus(event, fltInfo) {
   if (button.innerText === "CLOSE") {
     // If button has already been clicked
     mapElement.style.visibility = "hidden";
-    button.innerText = "view";
+    button.innerText = "track flight";
     resetMapLocationView();
   } else {
     // if a button is clicked

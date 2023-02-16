@@ -36,3 +36,7 @@ export function calculateDirection(deg) {
       return "N";
   }
 }
+
+export function convertMeterPerSecondToKilomentersPerHour(mps) {
+  return Math.round(mps * 3.6);
+}
