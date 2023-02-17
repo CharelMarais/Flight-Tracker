@@ -24,7 +24,7 @@ export function appendFlightInformationToFlightInfoContainer(flight) {
               <span class="media large-screen-size">${flight[7] ?? 0.0}m</span>
               <button id="${
                 flight[1]
-              }" class="view-button">track flight</button>
+              }" class="view-button">track flight</button> 
             </div>`;
   }
 }

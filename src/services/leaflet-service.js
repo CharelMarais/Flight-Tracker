@@ -1,3 +1,6 @@
+import L from "leaflet";
+import "leaflet/dist/leaflet.css";
+
 export const map = L.map("map").setView([-35, 25], 2);
 
 const planeIcon = document.createElement("div");
