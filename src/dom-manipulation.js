@@ -24,13 +24,13 @@ export function appendFlightInformationToFlightInfoContainer(flight) {
               <span class="media large-screen-size">${flight[7] ?? 0.0}m</span>
               <button id="${
                 flight[1]
-              }" class="view-button">track flight</button> 
+              }" class="track-button">track flight</button> 
             </div>`;
   }
 }
 
 export function addEventListenerToFlightInfoButtons(flights) {
-  const viewButtons = document.querySelectorAll(".view-button");
+  const viewButtons = document.querySelectorAll(".track-button");
   viewButtons.forEach((button) => {
     const relInfo = flights.find((flight) => flight[1] === button.id);
     button.addEventListener("click", () => {
@@ -63,9 +63,9 @@ function toggleFlightFocus(event, fltInfo) {
 }
 
 function showAndHideButtonsAfterClick(innerText) {
-  const buttons = document.querySelectorAll(".view-button");
+  const buttons = document.querySelectorAll(".track-button");
   buttons.forEach((button) => {
-    if (button.id !== event.target.id && innerText !== "VIEW") {
+    if (button.id !== event.target.id && innerText !== "TRACK FLIGHT") {
       button.parentNode.classList.add("hidden");
     } else {
       button.parentNode.classList.remove("hidden");
