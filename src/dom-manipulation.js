@@ -7,26 +7,57 @@ import {
   convertMeterPerSecondToKilomentersPerHour,
 } from "./utils/utils.js";
 
+function createNewFlightInfoRow(flight, flightInfoDiv) {
+  flightInfoDiv.innerHTML += `
+  <div id="${flight[0]}" class="single-flight">
+      <span>${flight[1] || "None"}</span>
+      <span class="media full-screen">${convertMeterPerSecondToKilomentersPerHour(
+        flight[11] ?? 0.0
+      )}m/s</span>
+      <span>${flight[9] ?? 0}m/s</span>
+      <span class="media medium-screen-size">${calculateDirection(
+        flight[10]
+      )}</span>
+      <span>${flight[10] ?? 0}°</span>
+      <span class="media large-screen-size">${flight[7] ?? 0.0}m</span>
+      <button id="${flight[1]}" class="track-button">track flight</button> 
+    </div>`;
+}
+
+function appendExistingFlightInfoRow(flight) {
+  const exsitingFlightInfoRow = document.getElementById(flight[0]);
+  exsitingFlightInfoRow.innerHTML = `
+    <span>${flight[1] || "None"}</span>
+    <span class="media full-screen">${convertMeterPerSecondToKilomentersPerHour(
+      flight[11] ?? 0.0
+    )}m/s</span>
+    <span>${flight[9] ?? 0}m/s</span>
+    <span class="media medium-screen-size">${calculateDirection(
+      flight[10]
+    )}</span>
+    <span>${flight[10] ?? 0}°</span>
+    <span class="media large-screen-size">${flight[7] ?? 0.0}m</span>
+    <button id="${flight[1]}" class="track-button">track flight</button> 
+    `;
+}
+
+export function removeOldOutOfScopeFlightInfoRow(inScopeFlightCodes) {
+  const flightInfoDivs = document.querySelectorAll(".single-flight");
+  // flightInfoDivs.map((flightRow) => inScopeFlightCodes.includes(flightRow.id));
+  flightInfoDivs.forEach((flightRow) => {
+    console.log(flightRow.id);
+  });
+}
+
 export function appendFlightInformationToFlightInfoContainer(flight) {
-  const flightInfo = document.getElementById("flights-info");
-  if (flightInfo) {
-    flightInfo.innerHTML += `
-          <div class="single-flight">
-              <span>${flight[1] || "None"}</span>
-              <span class="media full-screen">${convertMeterPerSecondToKilomentersPerHour(
-                flight[11] ?? 0.0
-              )}m/s</span>
-              <span>${flight[9] ?? 0}m/s</span>
-              <span class="media medium-screen-size">${calculateDirection(
-                flight[10]
-              )}</span>
-              <span>${flight[10] ?? 0}°</span>
-              <span class="media large-screen-size">${flight[7] ?? 0.0}m</span>
-              <button id="${
-                flight[1]
-              }" class="track-button">track flight</button> 
-            </div>`;
+  const flightInfoDiv = document.getElementById("flights-info");
+  const flightButtonExistence = document.getElementById(flight[1]);
+  if (flightInfoDiv && !flightButtonExistence) {
+    createNewFlightInfoRow(flight, flightInfoDiv);
+  } else {
+    appendExistingFlightInfoRow(flight);
   }
+  removeOldOutOfScopeFlightInfoRow(flight);
 }
 
 export function addEventListenerToFlightInfoButtons(flights) {
