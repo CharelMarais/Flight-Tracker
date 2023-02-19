@@ -7,6 +7,16 @@ import {
   convertMeterPerSecondToKilomentersPerHour,
 } from "./utils/utils.js";
 
+export function appendFlightInformationToFlightInfoContainer(flight) {
+  const flightInfoDiv = document.getElementById("flights-info");
+  const flightButtonExistence = document.getElementById(flight[1]);
+  if (flightInfoDiv && !flightButtonExistence) {
+    createNewFlightInfoRow(flight, flightInfoDiv);
+  } else {
+    appendExistingFlightInfoRow(flight);
+  }
+}
+
 function createNewFlightInfoRow(flight, flightInfoDiv) {
   flightInfoDiv.innerHTML += `
   <div id="${flight[0]}" class="single-flight">
@@ -26,7 +36,8 @@ function createNewFlightInfoRow(flight, flightInfoDiv) {
 
 function appendExistingFlightInfoRow(flight) {
   const exsitingFlightInfoRow = document.getElementById(flight[0]);
-  exsitingFlightInfoRow.innerHTML = `
+  if (exsitingFlightInfoRow) {
+    exsitingFlightInfoRow.innerHTML = `
     <span>${flight[1] || "None"}</span>
     <span class="media full-screen">${convertMeterPerSecondToKilomentersPerHour(
       flight[11] ?? 0.0
@@ -39,25 +50,18 @@ function appendExistingFlightInfoRow(flight) {
     <span class="media large-screen-size">${flight[7] ?? 0.0}m</span>
     <button id="${flight[1]}" class="track-button">track flight</button> 
     `;
+  }
 }
 
 export function removeOldOutOfScopeFlightInfoRow(inScopeFlightCodes) {
   const flightInfoDivs = document.querySelectorAll(".single-flight");
-  // flightInfoDivs.map((flightRow) => inScopeFlightCodes.includes(flightRow.id));
   flightInfoDivs.forEach((flightRow) => {
-    console.log(flightRow.id);
+    const inScope = inScopeFlightCodes.includes(flightRow.id);
+    if (!inScope) {
+      const singleFlightToRemove = document.getElementById(flightRow.id);
+      singleFlightToRemove.remove();
+    }
   });
-}
-
-export function appendFlightInformationToFlightInfoContainer(flight) {
-  const flightInfoDiv = document.getElementById("flights-info");
-  const flightButtonExistence = document.getElementById(flight[1]);
-  if (flightInfoDiv && !flightButtonExistence) {
-    createNewFlightInfoRow(flight, flightInfoDiv);
-  } else {
-    appendExistingFlightInfoRow(flight);
-  }
-  removeOldOutOfScopeFlightInfoRow(flight);
 }
 
 export function addEventListenerToFlightInfoButtons(flights) {

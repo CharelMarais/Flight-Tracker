@@ -16,7 +16,7 @@ function getAPIResponsAndUpdatePage() {
         currentFlightCodes.push(flight[0]);
       }
       addEventListenerToFlightInfoButtons(responseJSON.states);
-      // removeOldOutOfScopeFlightInfoRow(currentFlightCodes);
+      removeOldOutOfScopeFlightInfoRow(currentFlightCodes);
     })
     .catch((error) => console.error(error))
     .finally(() => {
@@ -26,4 +26,4 @@ function getAPIResponsAndUpdatePage() {
 
 getAPIResponsAndUpdatePage();
 
-// setInterval(getAPIResponsAndUpdatePage, 30000);
+setInterval(getAPIResponsAndUpdatePage, 30000);
