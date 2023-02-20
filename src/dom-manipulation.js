@@ -10,30 +10,36 @@ import {
 export function appendFlightInformationToFlightInfoContainer(flight) {
   const flightInfoDiv = document.getElementById("flights-info");
   const flightButtonExistence = document.getElementById(flight[0] + flight[1]);
-  if (flightInfoDiv && !flightButtonExistence) {
-    createNewFlightInfoRow(flight, flightInfoDiv);
-  } else {
-    appendExistingFlightInfoRow(flight);
+  if (flightInfoDiv) {
+    if (!flightButtonExistence) {
+      createNewFlightInfoRow(flight, flightInfoDiv);
+    } else {
+      appendExistingFlightInfoRow(flight);
+    }
   }
 }
 
 function createNewFlightInfoRow(flight, flightInfoDiv) {
-  flightInfoDiv.innerHTML += `
+  if (flight[0]) {
+    flightInfoDiv.innerHTML += `
   <div id="${flight[0]}" class="single-flight">
       <span>${flight[1] || "None"}</span>
       <span class="media full-screen">${convertMeterPerSecondToKilomentersPerHour(
         flight[11] ?? 0.0
-      )}m/s</span>
-      <span>${flight[9] ?? 0}m/s</span>
+      )}km/h</span>
+      <span>${convertMeterPerSecondToKilomentersPerHour(
+        flight[9] ?? 0
+      )}km/h</span>
       <span class="media medium-screen-size">${calculateDirection(
-        flight[10]
+        flight[10] ?? 0
       )}</span>
       <span>${flight[10] ?? 0}°</span>
       <span class="media large-screen-size">${flight[7] ?? 0.0}m</span>
       <button id="${
-        flight[0] + flight[1]
+        flight[0] + (flight[1] ?? 0)
       }" class="track-button">track flight</button> 
     </div>`;
+  }
 }
 
 function appendExistingFlightInfoRow(flight) {
@@ -43,10 +49,12 @@ function appendExistingFlightInfoRow(flight) {
     <span>${flight[1] || "None"}</span>
     <span class="media full-screen">${convertMeterPerSecondToKilomentersPerHour(
       flight[11] ?? 0.0
-    )}m/s</span>
-    <span>${flight[9] ?? 0}m/s</span>
+    )}km/h</span>
+    <span>${convertMeterPerSecondToKilomentersPerHour(
+      flight[9] ?? 0
+    )}km/h</span>
     <span class="media medium-screen-size">${calculateDirection(
-      flight[10]
+      flight[10] ?? 0
     )}</span>
     <span>${flight[10] ?? 0}°</span>
     <span class="media large-screen-size">${flight[7] ?? 0.0}m</span>
@@ -74,9 +82,11 @@ export function addEventListenerToFlightInfoButtons(flights) {
     const relInfo = flights.find(
       (flight) => flight[0] + flight[1] === button.id
     );
-    button.addEventListener("click", () => {
-      toggleFlightFocus(event, relInfo);
-    });
+    if (relInfo) {
+      button.addEventListener("click", () => {
+        toggleFlightFocus(event, relInfo);
+      });
+    }
   });
 }
 
