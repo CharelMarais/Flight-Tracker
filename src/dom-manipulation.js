@@ -30,7 +30,9 @@ function createNewFlightInfoRow(flight, flightInfoDiv) {
       )}</span>
       <span>${flight[10] ?? 0}°</span>
       <span class="media large-screen-size">${flight[7] ?? 0.0}m</span>
-      <button id="${flight[1]}" class="track-button">track flight</button> 
+      <button id="${
+        flight[0] + flight[1]
+      }" class="track-button">track flight</button> 
     </div>`;
 }
 
@@ -48,7 +50,9 @@ function appendExistingFlightInfoRow(flight) {
     )}</span>
     <span>${flight[10] ?? 0}°</span>
     <span class="media large-screen-size">${flight[7] ?? 0.0}m</span>
-    <button id="${flight[1]}" class="track-button">track flight</button> 
+    <button id="${
+      flight[0] + flight[1]
+    }" class="track-button">track flight</button> 
     `;
   }
 }
@@ -67,7 +71,9 @@ export function removeOldOutOfScopeFlightInfoRow(inScopeFlightCodes) {
 export function addEventListenerToFlightInfoButtons(flights) {
   const viewButtons = document.querySelectorAll(".track-button");
   viewButtons.forEach((button) => {
-    const relInfo = flights.find((flight) => flight[1] === button.id);
+    const relInfo = flights.find(
+      (flight) => flight[0] + flight[1] === button.id
+    );
     button.addEventListener("click", () => {
       toggleFlightFocus(event, relInfo);
     });
@@ -82,6 +88,8 @@ export function minimiseLoadingScreen() {
 function toggleFlightFocus(event, fltInfo) {
   const mapElement = document.getElementById("map");
   const button = event.target;
+
+  console.log(fltInfo);
 
   if (button.innerText === "CLOSE") {
     // If button has already been clicked
