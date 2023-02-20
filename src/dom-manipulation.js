@@ -9,7 +9,7 @@ import {
 
 export function appendFlightInformationToFlightInfoContainer(flight) {
   const flightInfoDiv = document.getElementById("flights-info");
-  const flightButtonExistence = document.getElementById(flight[1]);
+  const flightButtonExistence = document.getElementById(flight[0] + flight[1]);
   if (flightInfoDiv && !flightButtonExistence) {
     createNewFlightInfoRow(flight, flightInfoDiv);
   } else {
@@ -88,8 +88,6 @@ export function minimiseLoadingScreen() {
 function toggleFlightFocus(event, fltInfo) {
   const mapElement = document.getElementById("map");
   const button = event.target;
-
-  console.log(fltInfo);
 
   if (button.innerText === "CLOSE") {
     // If button has already been clicked
