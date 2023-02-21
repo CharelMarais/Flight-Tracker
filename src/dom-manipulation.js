@@ -1,3 +1,4 @@
+import { getAPIResponsAndUpdatePage } from "./main";
 import {
   resetMapLocationView,
   setMapAndMarkerToCurrentFlightLocation,
@@ -90,7 +91,7 @@ export function addEventListenerToFlightInfoButtons(flights) {
   });
 }
 
-export function minimiseLoadingScreen() {
+export async function minimiseLoadingScreen() {
   const loadScreen = document.getElementById("loading");
   loadScreen.style.animationName = "loadAnime";
 }

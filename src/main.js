@@ -6,7 +6,17 @@ import {
 } from "./dom-manipulation.js";
 import { fetchStream$, pollStream$ } from "./services/flight-service.js";
 
-function getAPIResponsAndUpdatePage(flight) {
+fetchStream$.subscribe((flight) => {
+  getAPIResponsAndUpdatePage(flight);
+  console.log("test init");
+});
+
+pollStream$.subscribe((flight) => {
+  console.log("test");
+  getAPIResponsAndUpdatePage(flight);
+});
+
+export function getAPIResponsAndUpdatePage(flight) {
   const currentFlightCodes = [];
   for (let flightInfo of flight.states) {
     appendFlightInformationToFlightInfoContainer(flightInfo);
@@ -15,13 +25,5 @@ function getAPIResponsAndUpdatePage(flight) {
   addEventListenerToFlightInfoButtons(flight.states);
   removeOldOutOfScopeFlightInfoRow(currentFlightCodes);
 }
-
-fetchStream$.subscribe((flight) => {
-  getAPIResponsAndUpdatePage(flight);
-});
-
-pollStream$.subscribe((flight) => {
-  getAPIResponsAndUpdatePage(flight);
-});
 
 minimiseLoadingScreen();
