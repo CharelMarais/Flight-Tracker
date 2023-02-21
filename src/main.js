@@ -4,26 +4,24 @@ import {
   minimiseLoadingScreen,
   removeOldOutOfScopeFlightInfoRow,
 } from "./dom-manipulation.js";
-import { getFlightInfo } from "./services/flight-service.js";
+import { fetchStream$, pollStream$ } from "./services/flight-service.js";
 
-function getAPIResponsAndUpdatePage() {
-  getFlightInfo()
-    .then((res) => res.json())
-    .then((responseJSON) => {
-      const currentFlightCodes = [];
-      for (let flight of responseJSON.states) {
-        appendFlightInformationToFlightInfoContainer(flight);
-        currentFlightCodes.push(flight[0]);
-      }
-      addEventListenerToFlightInfoButtons(responseJSON.states);
-      removeOldOutOfScopeFlightInfoRow(currentFlightCodes);
-    })
-    .catch((error) => console.error(error))
-    .finally(() => {
-      minimiseLoadingScreen();
-    });
+function getAPIResponsAndUpdatePage(flight) {
+  const currentFlightCodes = [];
+  for (let flightInfo of flight.states) {
+    appendFlightInformationToFlightInfoContainer(flightInfo);
+    currentFlightCodes.push(flightInfo[0]);
+  }
+  addEventListenerToFlightInfoButtons(flight.states);
+  removeOldOutOfScopeFlightInfoRow(currentFlightCodes);
 }
 
-getAPIResponsAndUpdatePage();
+fetchStream$.subscribe((flight) => {
+  getAPIResponsAndUpdatePage(flight);
+});
 
-setInterval(getAPIResponsAndUpdatePage, 30000);
+pollStream$.subscribe((flight) => {
+  getAPIResponsAndUpdatePage(flight);
+});
+
+minimiseLoadingScreen();
