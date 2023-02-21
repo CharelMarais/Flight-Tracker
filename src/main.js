@@ -8,11 +8,9 @@ import { fetchStream$, pollStream$ } from "./services/flight-service.js";
 
 fetchStream$.subscribe((flight) => {
   getAPIResponsAndUpdatePage(flight);
-  console.log("test init");
 });
 
 pollStream$.subscribe((flight) => {
-  console.log("test");
   getAPIResponsAndUpdatePage(flight);
 });
 
