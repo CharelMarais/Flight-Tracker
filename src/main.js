@@ -8,6 +8,7 @@ import { getFlightInfo } from "./services/flight-service.js";
 getFlightInfo()
   .then((res) => res.json())
   .then((responseJSON) => {
+    localStorage.setItem(responseJSON.states);
     for (let flight of responseJSON.states) {
       appendFlightInformationToFlightInfoContainer(flight);
     }
