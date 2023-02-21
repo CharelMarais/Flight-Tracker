@@ -12,38 +12,6 @@
     <title>Flight Track</title>
   </head>
   <body>
-    <div id="container">
-      <div class="heading">
-        <div class="logo"></div>
-        <div class="flight-track">
-          <p class="flight-heading">FLIGHT</p>
-          <p class="track-heading">TRACK</p>
-        </div>
-      </div>
-      <div class="content">
-        <div class="active-flights">
-          <div class="active-flights-heading">
-            <h1>Active Flights</h1>
-            <span>(Over South-African airspace)</span>
-          </div>
-          <div class="flights">
-            <div class="flight-headings">
-              <span>Call Sign</span>
-              <span class="media full-screen">Vertical Speed</span>
-              <span>Speed</span>
-              <span class="media medium-screen-size">Direction</span>
-              <span>Heading</span>
-              <span class="media large-screen-size">Altitude</span>
-              <span class="flight-location">Flight Location</span>
-            </div>
-            <div id="flights-info"></div>
-          </div>
-        </div>
-        <div class="flight-map">
-          <div id="map"></div>
-        </div>
-      </div>
-    </div>
     <div id="loading">
       <div class="spinner">
         <svg
@@ -74,6 +42,38 @@
             d="M448 336v-40L288 192V79.2c0-17.7-14.8-31.2-32-31.2s-32 13.5-32 31.2V192L64 296v40l160-48v113.6l-48 31.2V464l80-16 80 16v-31.2l-48-31.2V288l160 48z"
           ></path>
         </svg>
+      </div>
+    </div>
+    <div id="container">
+      <header class="heading">
+        <div class="logo"></div>
+        <div class="flight-track">
+          <p class="flight-heading">FLIGHT</p>
+          <p class="track-heading">TRACK</p>
+        </div>
+      </header>
+      <div class="content">
+        <main class="active-flights">
+          <div class="active-flights-heading">
+            <h1>Active Flights</h1>
+            <span>(Over South-African airspace)</span>
+          </div>
+          <div class="flights">
+            <div class="flight-headings">
+              <span>Call Sign</span>
+              <span class="media full-screen">Vertical Speed</span>
+              <span>Speed</span>
+              <span class="media medium-screen-size">Direction</span>
+              <span>Heading</span>
+              <span class="media large-screen-size">Altitude</span>
+              <span class="flight-location">Flight Location</span>
+            </div>
+            <div id="flights-info"></div>
+          </div>
+        </main>
+        <footer class="flight-map">
+          <div id="map"></div>
+        </footer>
       </div>
     </div>
     <script type="module" src="./src/main.js"></script>
