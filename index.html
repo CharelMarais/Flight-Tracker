@@ -8,14 +8,21 @@
       href="./assets/img/icons8-plane-24.png"
     />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="stylesheet" href="./src/styles.scss" />
+    <!-- <link rel="stylesheet" href="./src/styles.scss" /> -->
+    <link href="./dist/styles.css" rel="stylesheet" />
+    <link href="./src/styles.css" rel="stylesheet" />
     <title>Flight Track</title>
   </head>
-  <body>
-    <div id="loading">
-      <div class="spinner">
+  <body
+    class="m-0 h-screen w-screen bg-secondary-bg-color bg-cover font-sans text-white"
+  >
+    <div
+      id="loading"
+      class="absolute top-0 left-0 flex h-full w-full items-center justify-center bg-primary-bg-color"
+    >
+      <div class="spinner grid h-44 w-44 content-center justify-center">
         <svg
-          class="loading-earth"
+          class="loading-earth col-start-1 row-start-1 text-[8rem]"
           stroke="currentColor"
           fill="currentColor"
           stroke-width="0"
@@ -29,7 +36,7 @@
           ></path>
         </svg>
         <svg
-          class="loading-plane"
+          class="loading-plane relative top-12 left-12 col-start-1 row-start-1 animate-flight text-[2rem]"
           stroke="currentColor"
           fill="currentColor"
           stroke-width="0"
@@ -44,35 +51,54 @@
         </svg>
       </div>
     </div>
-    <div id="container">
-      <header class="heading">
-        <div class="logo"></div>
-        <div class="flight-track">
-          <p class="flight-heading">FLIGHT</p>
-          <p class="track-heading">TRACK</p>
+    <div id="container" class="flex h-full flex-col content-start">
+      <header class="heading m-0 flex h-fit bg-primary-bg-color p-0">
+        <div class="logo h-44 w-44"></div>
+        <div
+          class="flight-track grid w-auto flex-grow grid-cols-[3rem,4rem,3.5rem,auto] grid-rows-2 gap-0 pr-10 md:pr-20"
+        >
+          <p
+            class="flight-heading col-span-4 m-0 self-end border-b-4 text-4xl font-semibold"
+          >
+            FLIGHT
+          </p>
+          <p class="track-heading col-start-2 m-0 text-4xl font-semibold">
+            TRACK
+          </p>
         </div>
       </header>
-      <div class="content">
-        <main class="active-flights">
-          <div class="active-flights-heading">
-            <h1>Active Flights</h1>
-            <span>(Over South-African airspace)</span>
+      <div
+        class="content flex h-full w-full flex-col md:text-[1.1rem] lg:text-[1.2rem]"
+      >
+        <main class="active-flights flex h-fit flex-col justify-center p-4">
+          <div class="active-flights-heading flex">
+            <h1 class="font- m-0 self-start text-2xl">Active Flights</h1>
+            <span class="self-end pl-1 pb-1 text-xs"
+              >(Over South-African airspace)</span
+            >
           </div>
-          <div class="flights">
-            <div class="flight-headings">
+          <div class="flights flex flex-col pt-4">
+            <div
+              class="flight-headings ml-2 mr-2 grid grid-cols-4 pb-1 text-[0.7rem] font-medium md:grid-cols-5 md:text-[0.8rem] md:text-[0.8rem] lg:grid-cols-6 lg:text-[0.9rem] xl:grid-cols-7"
+            >
               <span>Call Sign</span>
-              <span class="media full-screen">Vertical Speed</span>
+              <span class="hidden xl:contents">Vertical Speed</span>
               <span>Speed</span>
-              <span class="media medium-screen-size">Direction</span>
+              <span class="hidden md:contents">Direction</span>
               <span>Heading</span>
-              <span class="media large-screen-size">Altitude</span>
-              <span class="flight-location">Flight Location</span>
+              <span class="hidden lg:contents">Altitude</span>
+              <span class="flight-location text-center">Flight Location</span>
             </div>
-            <div id="flights-info"></div>
+            <div
+              id="flights-info"
+              class="grid border-8 border-screen-border-color bg-screen-bg-color font-mono uppercase text-screen-font-color md:text-[0.9rem] lg:text-[1rem]"
+            ></div>
           </div>
         </main>
-        <footer class="flight-map">
-          <div id="map"></div>
+        <footer
+          class="flight-map h-full flex-grow bg-world-map bg-contain bg-center bg-no-repeat p-4 pt-0"
+        >
+          <div id="map" class="invisible h-full w-full"></div>
         </footer>
       </div>
     </div>

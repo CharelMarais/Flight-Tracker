@@ -1,4 +1,3 @@
-import { getAPIResponsAndUpdatePage } from "./main";
 import {
   resetMapLocationView,
   setMapAndMarkerToCurrentFlightLocation,
@@ -23,22 +22,24 @@ export function appendFlightInformationToFlightInfoContainer(flight) {
 function createNewFlightInfoRow(flight, flightInfoDiv) {
   if (flight[0]) {
     flightInfoDiv.innerHTML += `
-  <div id="${flight[0]}" class="single-flight">
+  <div id="${
+    flight[0]
+  }" class="single-flight grid grid-cols-4 py-1 text-[0.8rem] md:grid-cols-5 lg:grid-cols-6 xl:grid-cols-7">
       <span>${flight[1] || "None"}</span>
-      <span class="media full-screen">${convertMeterPerSecondToKilomentersPerHour(
+      <span class="hidden xl:contents">${convertMeterPerSecondToKilomentersPerHour(
         flight[11] ?? 0.0
       )}km/h</span>
       <span>${convertMeterPerSecondToKilomentersPerHour(
         flight[9] ?? 0
       )}km/h</span>
-      <span class="media medium-screen-size">${calculateDirection(
+      <span class="hidden md:contents">${calculateDirection(
         flight[10] ?? 0
       )}</span>
       <span>${flight[10] ?? 0}°</span>
-      <span class="media large-screen-size">${flight[7] ?? 0.0}m</span>
+      <span class="hidden lg:contents">${flight[7] ?? 0.0}m</span>
       <button id="${
         flight[0] + (flight[1] ?? 0)
-      }" class="track-button">track flight</button> 
+      }" class="track-button uppercase font-bold cursor-pointer border-none">track</button> 
     </div>`;
   }
 }
@@ -48,20 +49,20 @@ function appendExistingFlightInfoRow(flight) {
   if (exsitingFlightInfoRow) {
     exsitingFlightInfoRow.innerHTML = `
     <span>${flight[1] || "None"}</span>
-    <span class="media full-screen">${convertMeterPerSecondToKilomentersPerHour(
-      flight[11] ?? 0.0
-    )}km/h</span>
-    <span>${convertMeterPerSecondToKilomentersPerHour(
-      flight[9] ?? 0
-    )}km/h</span>
-    <span class="media medium-screen-size">${calculateDirection(
-      flight[10] ?? 0
-    )}</span>
-    <span>${flight[10] ?? 0}°</span>
-    <span class="media large-screen-size">${flight[7] ?? 0.0}m</span>
-    <button id="${
-      flight[0] + flight[1]
-    }" class="track-button">track flight</button> 
+      <span class="hidden xl:contents">${convertMeterPerSecondToKilomentersPerHour(
+        flight[11] ?? 0.0
+      )}km/h</span>
+      <span>${convertMeterPerSecondToKilomentersPerHour(
+        flight[9] ?? 0
+      )}km/h</span>
+      <span class="hidden md:contents">${calculateDirection(
+        flight[10] ?? 0
+      )}</span>
+      <span>${flight[10] ?? 0}°</span>
+      <span class="hidden lg:contents">${flight[7] ?? 0.0}m</span>
+      <button id="${
+        flight[0] + (flight[1] ?? 0)
+      }" class="track-button uppercase">track</button> 
     `;
   }
 }
@@ -93,7 +94,7 @@ export function addEventListenerToFlightInfoButtons(flights) {
 
 export async function minimiseLoadingScreen() {
   const loadScreen = document.getElementById("loading");
-  loadScreen.style.animationName = "loadAnime";
+  loadScreen.classList.add("animate-loadAnime");
 }
 
 function toggleFlightFocus(event, fltInfo) {
@@ -103,7 +104,7 @@ function toggleFlightFocus(event, fltInfo) {
   if (button.innerText === "CLOSE") {
     // If button has already been clicked
     mapElement.style.visibility = "hidden";
-    button.innerText = "track flight";
+    button.innerText = "track";
     resetMapLocationView();
   } else {
     // if a button is clicked
@@ -117,7 +118,7 @@ function toggleFlightFocus(event, fltInfo) {
 function showAndHideButtonsAfterClick(innerText) {
   const buttons = document.querySelectorAll(".track-button");
   buttons.forEach((button) => {
-    if (button.id !== event.target.id && innerText !== "TRACK FLIGHT") {
+    if (button.id !== event.target.id && innerText !== "TRACK") {
       button.parentNode.classList.add("hidden");
     } else {
       button.parentNode.classList.remove("hidden");
