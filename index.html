@@ -8,48 +8,10 @@
       href="./assets/img/icons8-plane-24.png"
     />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <!-- <link
-      rel="stylesheet"
-      href="https://unpkg.com/leaflet@1.9.3/dist/leaflet.css"
-      integrity="sha256-kLaT2GOSpHechhsozzB+flnD+zUyjE2LlfWPgU04xyI="
-      crossorigin=""
-    /> -->
     <link rel="stylesheet" href="./src/styles.scss" />
     <title>Flight Track</title>
   </head>
   <body>
-    <div id="container">
-      <div class="heading">
-        <div class="logo"></div>
-        <div class="flight-track">
-          <p class="flight-heading">FLIGHT</p>
-          <p class="track-heading">TRACK</p>
-        </div>
-      </div>
-      <div class="content">
-        <div class="active-flights">
-          <div class="active-flights-heading">
-            <h1>Active Flights</h1>
-            <span>(Over South-African airspace)</span>
-          </div>
-          <div class="flights">
-            <div class="flight-headings">
-              <span>Call Sign</span>
-              <span class="media full-screen">Vertical Speed</span>
-              <span>Speed</span>
-              <span class="media medium-screen-size">Direction</span>
-              <span>Heading</span>
-              <span class="media large-screen-size">Altitude</span>
-              <span class="flight-location">Flight Location</span>
-            </div>
-            <div id="flights-info"></div>
-          </div>
-        </div>
-        <div class="flight-map">
-          <div id="map"></div>
-        </div>
-      </div>
-    </div>
     <div id="loading">
       <div class="spinner">
         <svg
@@ -82,11 +44,39 @@
         </svg>
       </div>
     </div>
+    <div id="container">
+      <header class="heading">
+        <div class="logo"></div>
+        <div class="flight-track">
+          <p class="flight-heading">FLIGHT</p>
+          <p class="track-heading">TRACK</p>
+        </div>
+      </header>
+      <div class="content">
+        <main class="active-flights">
+          <div class="active-flights-heading">
+            <h1>Active Flights</h1>
+            <span>(Over South-African airspace)</span>
+          </div>
+          <div class="flights">
+            <div class="flight-headings">
+              <span>Call Sign</span>
+              <span class="media full-screen">Vertical Speed</span>
+              <span>Speed</span>
+              <span class="media medium-screen-size">Direction</span>
+              <span>Heading</span>
+              <span class="media large-screen-size">Altitude</span>
+              <span class="flight-location">Flight Location</span>
+            </div>
+            <div id="flights-info"></div>
+          </div>
+        </main>
+        <footer class="flight-map">
+          <div id="map"></div>
+        </footer>
+      </div>
+    </div>
     <script type="module" src="./src/main.js"></script>
-    <!-- <script
-      src="https://unpkg.com/leaflet@1.9.3/dist/leaflet.js"
-      integrity="sha256-WBkoXOwTeyKclOHuWtc+i2uENFpDZ9YPdf5Hf+D7ewM="
-      crossorigin=""
-    ></script> -->
+    <script type="module" src="./src/services/flight-service.js"></script>
   </body>
 </html>

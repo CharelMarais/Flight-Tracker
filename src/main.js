@@ -2,19 +2,25 @@ import {
   addEventListenerToFlightInfoButtons,
   appendFlightInformationToFlightInfoContainer,
   minimiseLoadingScreen,
+  removeOldOutOfScopeFlightInfoRow,
 } from "./dom-manipulation.js";
-import { getFlightInfo } from "./services/flight-service.js";
+import { fetchStream$, pollStream$ } from "./services/flight-service.js";
 
-getFlightInfo()
-  .then((res) => res.json())
-  .then((responseJSON) => {
-    localStorage.setItem(responseJSON.states);
-    for (let flight of responseJSON.states) {
-      appendFlightInformationToFlightInfoContainer(flight);
-    }
-    addEventListenerToFlightInfoButtons(responseJSON.states);
-  })
-  .catch((error) => console.error(error))
-  .finally(() => {
-    minimiseLoadingScreen();
-  });
+fetchStream$.subscribe({
+  next: (flight) => getAPIResponseAndUpdatePage(flight),
+  complete: () => minimiseLoadingScreen(),
+});
+
+pollStream$.subscribe((flight) => {
+  getAPIResponseAndUpdatePage(flight);
+});
+
+export function getAPIResponseAndUpdatePage(flight) {
+  const currentFlightCodes = [];
+  for (let flightInfo of flight.states) {
+    appendFlightInformationToFlightInfoContainer(flightInfo);
+    currentFlightCodes.push(flightInfo[0]);
+  }
+  addEventListenerToFlightInfoButtons(flight.states);
+  removeOldOutOfScopeFlightInfoRow(currentFlightCodes);
+}

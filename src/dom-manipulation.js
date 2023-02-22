@@ -1,3 +1,4 @@
+import { getAPIResponsAndUpdatePage } from "./main";
 import {
   resetMapLocationView,
   setMapAndMarkerToCurrentFlightLocation,
@@ -8,38 +9,89 @@ import {
 } from "./utils/utils.js";
 
 export function appendFlightInformationToFlightInfoContainer(flight) {
-  const flightInfo = document.getElementById("flights-info");
-  if (flightInfo) {
-    flightInfo.innerHTML += `
-          <div class="single-flight">
-              <span>${flight[1] || "None"}</span>
-              <span class="media full-screen">${convertMeterPerSecondToKilomentersPerHour(
-                flight[11] ?? 0.0
-              )}m/s</span>
-              <span>${flight[9] ?? 0}m/s</span>
-              <span class="media medium-screen-size">${calculateDirection(
-                flight[10]
-              )}</span>
-              <span>${flight[10] ?? 0}°</span>
-              <span class="media large-screen-size">${flight[7] ?? 0.0}m</span>
-              <button id="${
-                flight[1]
-              }" class="track-button">track flight</button> 
-            </div>`;
+  const flightInfoDiv = document.getElementById("flights-info");
+  const flightButtonExistence = document.getElementById(flight[0] + flight[1]);
+  if (flightInfoDiv) {
+    if (!flightButtonExistence) {
+      createNewFlightInfoRow(flight, flightInfoDiv);
+    } else {
+      appendExistingFlightInfoRow(flight);
+    }
   }
+}
+
+function createNewFlightInfoRow(flight, flightInfoDiv) {
+  if (flight[0]) {
+    flightInfoDiv.innerHTML += `
+  <div id="${flight[0]}" class="single-flight">
+      <span>${flight[1] || "None"}</span>
+      <span class="media full-screen">${convertMeterPerSecondToKilomentersPerHour(
+        flight[11] ?? 0.0
+      )}km/h</span>
+      <span>${convertMeterPerSecondToKilomentersPerHour(
+        flight[9] ?? 0
+      )}km/h</span>
+      <span class="media medium-screen-size">${calculateDirection(
+        flight[10] ?? 0
+      )}</span>
+      <span>${flight[10] ?? 0}°</span>
+      <span class="media large-screen-size">${flight[7] ?? 0.0}m</span>
+      <button id="${
+        flight[0] + (flight[1] ?? 0)
+      }" class="track-button">track flight</button> 
+    </div>`;
+  }
+}
+
+function appendExistingFlightInfoRow(flight) {
+  const exsitingFlightInfoRow = document.getElementById(flight[0]);
+  if (exsitingFlightInfoRow) {
+    exsitingFlightInfoRow.innerHTML = `
+    <span>${flight[1] || "None"}</span>
+    <span class="media full-screen">${convertMeterPerSecondToKilomentersPerHour(
+      flight[11] ?? 0.0
+    )}km/h</span>
+    <span>${convertMeterPerSecondToKilomentersPerHour(
+      flight[9] ?? 0
+    )}km/h</span>
+    <span class="media medium-screen-size">${calculateDirection(
+      flight[10] ?? 0
+    )}</span>
+    <span>${flight[10] ?? 0}°</span>
+    <span class="media large-screen-size">${flight[7] ?? 0.0}m</span>
+    <button id="${
+      flight[0] + flight[1]
+    }" class="track-button">track flight</button> 
+    `;
+  }
+}
+
+export function removeOldOutOfScopeFlightInfoRow(inScopeFlightCodes) {
+  const flightInfoDivs = document.querySelectorAll(".single-flight");
+  flightInfoDivs.forEach((flightRow) => {
+    const inScope = inScopeFlightCodes.includes(flightRow.id);
+    if (!inScope) {
+      const singleFlightToRemove = document.getElementById(flightRow.id);
+      singleFlightToRemove.remove();
+    }
+  });
 }
 
 export function addEventListenerToFlightInfoButtons(flights) {
   const viewButtons = document.querySelectorAll(".track-button");
   viewButtons.forEach((button) => {
-    const relInfo = flights.find((flight) => flight[1] === button.id);
-    button.addEventListener("click", () => {
-      toggleFlightFocus(event, relInfo);
-    });
+    const relInfo = flights.find(
+      (flight) => flight[0] + flight[1] === button.id
+    );
+    if (relInfo) {
+      button.addEventListener("click", () => {
+        toggleFlightFocus(event, relInfo);
+      });
+    }
   });
 }
 
-export function minimiseLoadingScreen() {
+export async function minimiseLoadingScreen() {
   const loadScreen = document.getElementById("loading");
   loadScreen.style.animationName = "loadAnime";
 }
