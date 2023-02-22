@@ -6,8 +6,9 @@ import {
 } from "./dom-manipulation.js";
 import { fetchStream$, pollStream$ } from "./services/flight-service.js";
 
-fetchStream$.subscribe((flight) => {
-  getAPIResponsAndUpdatePage(flight);
+fetchStream$.subscribe({
+  next: (flight) => getAPIResponsAndUpdatePage(flight),
+  complete: () => minimiseLoadingScreen(),
 });
 
 pollStream$.subscribe((flight) => {
@@ -23,5 +24,3 @@ export function getAPIResponsAndUpdatePage(flight) {
   addEventListenerToFlightInfoButtons(flight.states);
   removeOldOutOfScopeFlightInfoRow(currentFlightCodes);
 }
-
-minimiseLoadingScreen();
