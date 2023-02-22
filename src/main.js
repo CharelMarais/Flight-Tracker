@@ -7,15 +7,15 @@ import {
 import { fetchStream$, pollStream$ } from "./services/flight-service.js";
 
 fetchStream$.subscribe({
-  next: (flight) => getAPIResponsAndUpdatePage(flight),
+  next: (flight) => getAPIResponseAndUpdatePage(flight),
   complete: () => minimiseLoadingScreen(),
 });
 
 pollStream$.subscribe((flight) => {
-  getAPIResponsAndUpdatePage(flight);
+  getAPIResponseAndUpdatePage(flight);
 });
 
-export function getAPIResponsAndUpdatePage(flight) {
+export function getAPIResponseAndUpdatePage(flight) {
   const currentFlightCodes = [];
   for (let flightInfo of flight.states) {
     appendFlightInformationToFlightInfoContainer(flightInfo);
