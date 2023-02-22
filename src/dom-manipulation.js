@@ -1,4 +1,3 @@
-import { getAPIResponsAndUpdatePage } from "./main";
 import {
   resetMapLocationView,
   setMapAndMarkerToCurrentFlightLocation,
