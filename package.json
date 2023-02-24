@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite --host",
-    "build": "vite build",
+    "build": "tsc && vite build",
     "preview": "vite preview",
     "host": "vite --host"
   },
@@ -19,7 +19,6 @@
     "vite": "^4.1.0"
   },
   "dependencies": {
-    "awesome-typescript-loader": "^5.2.1",
     "date-fns": "^2.29.3",
     "idb-keyval": "^6.2.0",
     "leaflet": "^1.9.3",

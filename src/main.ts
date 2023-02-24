@@ -4,18 +4,19 @@ import {
   minimiseLoadingScreen,
   removeOldOutOfScopeFlightInfoRow,
 } from "./dom-manipulation.js";
+import { flightStream } from "./models/flight.js";
 import { fetchStream$, pollStream$ } from "./services/flight-service.js";
 
 fetchStream$.subscribe({
-  next: (flight) => getAPIResponseAndUpdatePage(flight),
+  next: (flight: flightStream) => getAPIResponseAndUpdatePage(flight),
   complete: () => minimiseLoadingScreen(),
 });
 
-pollStream$.subscribe((flight) => {
+pollStream$.subscribe((flight: flightStream) => {
   getAPIResponseAndUpdatePage(flight);
 });
 
-export function getAPIResponseAndUpdatePage(flight) {
+export function getAPIResponseAndUpdatePage(flight: flightStream) {
   const currentFlightCodes = [];
   for (let flightInfo of flight.states) {
     appendFlightInformationToFlightInfoContainer(flightInfo);
