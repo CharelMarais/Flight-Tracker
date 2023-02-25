@@ -1,13 +1,10 @@
 export interface IFlightAPIStream {
     time: number;
-    states: IFlightsArray[][];
+    states: Array<IFlights>;
 }
 
-interface IFlightsArray {
-    IFlights: IFlights[]
-}
 
-interface IFlights {
+export interface IFlights {
     icao24: string;
     callsign: string;
     origin_country: string;
