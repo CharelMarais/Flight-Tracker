@@ -3,10 +3,10 @@ import "leaflet/dist/leaflet.css";
 
 export const map = L.map("map").setView([-35, 25], 2);
 
-const planeIcon = document.createElement("div");
+const planeIcon = document.createElement("div") as HTMLElement;
 planeIcon.id = "plane-icon";
 planeIcon.innerHTML = `<img src="../../assets/img/icons8-plane-24.png" alt="plane icon">`;
-planeIcon.style["transform-origin"] = "center";
+// planeIcon.style["transform-origin"] = "center";
 const divIcon = L.divIcon({
   html: planeIcon,
   iconSize: [24, 24],
