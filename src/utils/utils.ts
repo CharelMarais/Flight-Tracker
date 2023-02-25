@@ -1,4 +1,4 @@
-export function calculateDirection(deg: number):string {
+export function calculateDirection(deg: number): string {
   switch (true) {
     case deg < 11.25:
       return "N";
@@ -37,6 +37,6 @@ export function calculateDirection(deg: number):string {
   }
 }
 
-export function convertMeterPerSecondToKilomentersPerHour(mps: number) {
+export function convertMeterPerSecondToKilomentersPerHour(mps: number): number {
   return Math.round(mps * 3.6);
 }

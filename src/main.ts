@@ -8,15 +8,15 @@ import { IFlights } from "./models/flight.js";
 import { fetchStream$, pollStream$ } from "./services/flight-service.js";
 
 fetchStream$.subscribe({
-  next: (flight: IFlights[]) => getAPIResponseAndUpdatePage(flight),
+  next: (flight: IFlights[]): void => getAPIResponseAndUpdatePage(flight),
   complete: () => minimiseLoadingScreen(),
 });
 
-pollStream$.subscribe((flight: IFlights[]) => {
+pollStream$.subscribe((flight: IFlights[]): void => {
   getAPIResponseAndUpdatePage(flight);
 });
 
-export function getAPIResponseAndUpdatePage(flight: IFlights[]) {
+export function getAPIResponseAndUpdatePage(flight: IFlights[]): void {
   const currentFlightCodes = [];
   for (let flightInfo of flight) {
     appendFlightInformationToFlightInfoContainer(flightInfo);
