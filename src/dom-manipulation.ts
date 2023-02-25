@@ -6,7 +6,7 @@ import {
 import {
   calculateDirection,
   convertMeterPerSecondToKilomentersPerHour,
-} from "./utils/utils.js";
+} from "./utils/utils";
 
 export function appendFlightInformationToFlightInfoContainer(
   flight: IFlights
