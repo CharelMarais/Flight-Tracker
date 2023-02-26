@@ -10,7 +10,7 @@ import {
 } from "./utils/utils";
 
 // Sybscribe to api output and update table with new or updated info
-fetchStream$.subscribe((flightArray) => {
+fetchStream$.subscribe(async (flightArray) => {
   flightArray.map((flight) => {
     const flightInfoDiv = document.getElementById("flights-info");
     const flightButton = document.getElementById(
@@ -23,6 +23,7 @@ fetchStream$.subscribe((flightArray) => {
       appendExistingFlightInfoRow(flight);
     }
   });
+  await minimiseLoadingScreen();
   addEventListenerToFlightInfoButtons(flightArray);
 });
 

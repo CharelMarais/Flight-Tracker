@@ -1,5 +1,5 @@
-import { Observable, switchMap, timer } from "rxjs";
-import { concatMap, map } from "rxjs/operators";
+import { Observable, of, switchMap, timer } from "rxjs";
+import { catchError, concatMap, map } from "rxjs/operators";
 import { fromFetch } from "rxjs/fetch";
 import { IFlightAPIStream, IFlights } from "../models/flight";
 
@@ -9,10 +9,19 @@ export const fetchStream$: Observable<IFlights[]> = timer(0, 30000).pipe(
       "https://opensky-network.org/api/states/all?lamin=-35.8229&lomin=16.2562&lamax=-22.8389&lomax=33.3526"
     ).pipe(
       switchMap((response) => {
-        return response.json() as Promise<IFlightAPIStream>;
+        if (response.ok) {
+          return response.json() as Promise<IFlightAPIStream>;
+        } else {
+          return of(
+            JSON.parse(
+              localStorage.getItem("flights") ?? "none"
+            ) as IFlightAPIStream
+          );
+        }
       }),
-      map((result) => {
-        const flightArray = result.states.map((flightInfo) => {
+      map((result): IFlights[] => {
+        localStorage.setItem("flights", JSON.stringify(result));
+        const flightArray = result.states.map((flightInfo): IFlights => {
           const flight: IFlights = {
             icao24: (flightInfo[0] as string) ?? "none",
             callsign: (flightInfo[1] as string) || "none",
