@@ -1,5 +1,5 @@
 import { Observable, of, switchMap, timer } from "rxjs";
-import { catchError, concatMap, map } from "rxjs/operators";
+import { concatMap, map } from "rxjs/operators";
 import { fromFetch } from "rxjs/fetch";
 import { IFlightAPIStream, IFlights } from "../models/flight";
 

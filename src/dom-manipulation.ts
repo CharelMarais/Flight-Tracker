@@ -9,8 +9,13 @@ import {
   convertMeterPerSecondToKilomentersPerHour,
 } from "./utils/utils";
 
+//link main to the dom manipulation
+export function nonsense() {
+  console.log("test");
+}
+
 // Sybscribe to api output and update table with new or updated info
-fetchStream$.subscribe(async (flightArray) => {
+fetchStream$.subscribe((flightArray) => {
   flightArray.map((flight) => {
     const flightInfoDiv = document.getElementById("flights-info");
     const flightButton = document.getElementById(
@@ -23,7 +28,7 @@ fetchStream$.subscribe(async (flightArray) => {
       appendExistingFlightInfoRow(flight);
     }
   });
-  await minimiseLoadingScreen();
+  minimiseLoadingScreen();
   addEventListenerToFlightInfoButtons(flightArray);
 });
 
@@ -67,10 +72,6 @@ function createNewFlightInfoRow(
         flight.icao24 + flight.callsign
       }" class="track-button uppercase font-bold cursor-pointer border-none">track</button> 
     </div>`;
-
-  if (flightInfoDiv.innerHTML !== "") {
-    minimiseLoadingScreen();
-  }
 }
 
 function appendExistingFlightInfoRow(flight: IFlights): void {
