@@ -1,4 +1,6 @@
+import { tap } from "rxjs/operators";
 import { IFlights } from "./models/flight";
+import { fetchStream$ } from "./services/flight-service";
 import {
   resetMapLocationView,
   setMapAndMarkerToCurrentFlightLocation,
@@ -8,76 +10,29 @@ import {
   convertMeterPerSecondToKilomentersPerHour,
 } from "./utils/utils";
 
-export function appendFlightInformationToFlightInfoContainer(
-  flight: IFlights
-): void {
-  const flightInfoDiv = document.getElementById("flights-info");
-  const flightButtonExistence = document.getElementById(
-    flight.icao24 + flight.callsign
-  );
-  if (!flightInfoDiv) return;
-  if (!flightButtonExistence) {
-    createNewFlightInfoRow(flight, flightInfoDiv);
-  } else {
-    appendExistingFlightInfoRow(flight);
-  }
-}
+// Sybscribe to api output and update table with new or updated info
+fetchStream$.subscribe((flightArray) => {
+  flightArray.map((flight) => {
+    const flightInfoDiv = document.getElementById("flights-info");
+    const flightButton = document.getElementById(
+      flight.icao24 + flight.callsign
+    );
+    if (!flightInfoDiv) return;
+    if (!flightButton) {
+      createNewFlightInfoRow(flight, flightInfoDiv);
+    } else {
+      appendExistingFlightInfoRow(flight);
+    }
+  });
+  addEventListenerToFlightInfoButtons(flightArray);
+});
 
-// double null checks to be removed in observable brance
-
-function createNewFlightInfoRow(
-  flight: IFlights,
-  flightInfoDiv: HTMLElement
-): void {
-  if (flight.icao24) return;
-  flightInfoDiv.innerHTML += `
-  <div id="${
-    flight.icao24
-  }" class="single-flight grid grid-cols-4 py-1 text-[0.8rem] md:grid-cols-5 lg:grid-cols-6 xl:grid-cols-7">
-      <span>${flight.callsign || "None"}</span>
-      <span class="hidden xl:contents">${convertMeterPerSecondToKilomentersPerHour(
-        flight.vertical_rate ?? 0.0
-      )}km/h</span>
-      <span>${convertMeterPerSecondToKilomentersPerHour(
-        flight.velocity ?? 0
-      )}km/h</span>
-      <span class="hidden md:contents">${calculateDirection(
-        flight.true_track ?? 0
-      )}</span>
-      <span>${flight.true_track ?? 0}°</span>
-      <span class="hidden lg:contents">${flight.baro_altitude ?? 0.0}m</span>
-      <button id="${
-        flight.icao24 + (flight.callsign ?? 0)
-      }" class="track-button uppercase font-bold cursor-pointer border-none">track</button> 
-    </div>`;
-}
-
-function appendExistingFlightInfoRow(flight: IFlights): void {
-  const exsitingFlightInfoRow = document.getElementById(flight.icao24);
-  if (!exsitingFlightInfoRow) return;
-  exsitingFlightInfoRow.innerHTML = `
-    <span>${flight.callsign || "None"}</span>
-      <span class="hidden xl:contents">${convertMeterPerSecondToKilomentersPerHour(
-        flight.vertical_rate ?? 0.0
-      )}km/h</span>
-      <span>${convertMeterPerSecondToKilomentersPerHour(
-        flight.velocity ?? 0
-      )}km/h</span>
-      <span class="hidden md:contents">${calculateDirection(
-        flight.true_track ?? 0
-      )}</span>
-      <span>${flight.true_track ?? 0}°</span>
-      <span class="hidden lg:contents">${flight.baro_altitude ?? 0.0}m</span>
-      <button id="${
-        flight.icao24 + (flight.callsign ?? 0)
-      }" class="track-button uppercase">track</button> 
-    `;
-}
-
-export function removeOldOutOfScopeFlightInfoRow(
-  inScopeFlightCodes: string[]
-): void {
+// Remove Old Out Of Scope Flight Info Row
+fetchStream$.subscribe((flightArray) => {
+  const inScopeFlightCodes: string[] = [];
   const flightInfoDivs = document.querySelectorAll(".single-flight");
+
+  flightArray.map((flight) => inScopeFlightCodes.push(flight.icao24));
   flightInfoDivs.forEach((flightRow) => {
     const inScope = inScopeFlightCodes.includes(flightRow.id);
     if (!inScope) {
@@ -85,6 +40,59 @@ export function removeOldOutOfScopeFlightInfoRow(
       singleFlightToRemove!.remove();
     }
   });
+});
+
+function createNewFlightInfoRow(
+  flight: IFlights,
+  flightInfoDiv: HTMLElement
+): void {
+  if (!flight.icao24) return;
+  flightInfoDiv.innerHTML += `
+  <div id="${
+    flight.icao24
+  }" class="single-flight grid grid-cols-4 py-1 text-[0.8rem] md:grid-cols-5 lg:grid-cols-6 xl:grid-cols-7">
+      <span>${flight.callsign}</span>
+      <span class="hidden xl:contents">${convertMeterPerSecondToKilomentersPerHour(
+        flight.vertical_rate
+      )}km/h</span>
+      <span>${convertMeterPerSecondToKilomentersPerHour(
+        flight.velocity
+      )}km/h</span>
+      <span class="hidden md:contents">${calculateDirection(
+        flight.true_track
+      )}</span>
+      <span>${flight.true_track}°</span>
+      <span class="hidden lg:contents">${flight.baro_altitude}m</span>
+      <button id="${
+        flight.icao24 + flight.callsign
+      }" class="track-button uppercase font-bold cursor-pointer border-none">track</button> 
+    </div>`;
+
+  if (flightInfoDiv.innerHTML !== "") {
+    minimiseLoadingScreen();
+  }
+}
+
+function appendExistingFlightInfoRow(flight: IFlights): void {
+  const exsitingFlightInfoRow = document.getElementById(flight.icao24);
+  if (!exsitingFlightInfoRow) return;
+  exsitingFlightInfoRow.innerHTML = `
+    <span>${flight.callsign}</span>
+      <span class="hidden xl:contents">${convertMeterPerSecondToKilomentersPerHour(
+        flight.vertical_rate
+      )}km/h</span>
+      <span>${convertMeterPerSecondToKilomentersPerHour(
+        flight.velocity
+      )}km/h</span>
+      <span class="hidden md:contents">${calculateDirection(
+        flight.true_track
+      )}</span>
+      <span>${flight.true_track}°</span>
+      <span class="hidden lg:contents">${flight.baro_altitude}m</span>
+      <button id="${
+        flight.icao24 + flight.callsign
+      }" class="track-button uppercase">track</button> 
+    `;
 }
 
 export function addEventListenerToFlightInfoButtons(flights: IFlights[]): void {
@@ -103,7 +111,9 @@ export function addEventListenerToFlightInfoButtons(flights: IFlights[]): void {
 export function minimiseLoadingScreen(): void {
   const loadScreen = document.getElementById("loading");
 
-  loadScreen!.classList.add("animate-loadAnime");
+  if (!loadScreen || loadScreen.classList.contains("loaded")) return;
+  loadScreen.classList.add("animate-loadAnime");
+  loadScreen.classList.add("loaded");
 }
 
 function toggleFlightFocus(event: MouseEvent, fltInfo: IFlights): void {
