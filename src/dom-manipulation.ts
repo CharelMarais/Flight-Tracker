@@ -1,4 +1,3 @@
-import { tap } from "rxjs/operators";
 import { IFlights } from "./models/flight";
 import { fetchStream$ } from "./services/flight-service";
 import {
@@ -11,21 +10,23 @@ import {
 } from "./utils/utils";
 
 // Sybscribe to api output and update table with new or updated info
-fetchStream$.subscribe((flightArray) => {
-  flightArray.map((flight) => {
-    const flightInfoDiv = document.getElementById("flights-info");
-    const flightButton = document.getElementById(
-      flight.icao24 + flight.callsign
-    );
-    if (!flightInfoDiv) return;
-    if (!flightButton) {
-      createNewFlightInfoRow(flight, flightInfoDiv);
-    } else {
-      appendExistingFlightInfoRow(flight);
-    }
+export const getApiInfoFromObservableAndUpdateFlightList =
+  fetchStream$.subscribe((flightArray) => {
+    flightArray.map((flight) => {
+      const flightInfoDiv = document.getElementById("flights-info");
+      const flightButton = document.getElementById(
+        flight.icao24 + flight.callsign
+      );
+      if (!flightInfoDiv) return;
+      if (!flightButton) {
+        createNewFlightInfoRow(flight, flightInfoDiv);
+      } else {
+        appendExistingFlightInfoRow(flight);
+      }
+    });
+    minimiseLoadingScreen();
+    addEventListenerToFlightInfoButtons(flightArray);
   });
-  addEventListenerToFlightInfoButtons(flightArray);
-});
 
 // Remove Old Out Of Scope Flight Info Row
 fetchStream$.subscribe((flightArray) => {
@@ -67,10 +68,6 @@ function createNewFlightInfoRow(
         flight.icao24 + flight.callsign
       }" class="track-button uppercase font-bold cursor-pointer border-none">track</button> 
     </div>`;
-
-  if (flightInfoDiv.innerHTML !== "") {
-    minimiseLoadingScreen();
-  }
 }
 
 function appendExistingFlightInfoRow(flight: IFlights): void {
