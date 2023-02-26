@@ -14,11 +14,11 @@ import {
 fetchStream$.subscribe((flightArray) => {
   flightArray.map((flight) => {
     const flightInfoDiv = document.getElementById("flights-info");
-    const flightButtonExistence = document.getElementById(
+    const flightButton = document.getElementById(
       flight.icao24 + flight.callsign
     );
     if (!flightInfoDiv) return;
-    if (!flightButtonExistence) {
+    if (!flightButton) {
       createNewFlightInfoRow(flight, flightInfoDiv);
     } else {
       appendExistingFlightInfoRow(flight);
