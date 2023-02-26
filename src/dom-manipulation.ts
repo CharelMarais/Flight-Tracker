@@ -9,28 +9,24 @@ import {
   convertMeterPerSecondToKilomentersPerHour,
 } from "./utils/utils";
 
-//link main to the dom manipulation
-export function nonsense() {
-  console.log("test");
-}
-
 // Sybscribe to api output and update table with new or updated info
-fetchStream$.subscribe((flightArray) => {
-  flightArray.map((flight) => {
-    const flightInfoDiv = document.getElementById("flights-info");
-    const flightButton = document.getElementById(
-      flight.icao24 + flight.callsign
-    );
-    if (!flightInfoDiv) return;
-    if (!flightButton) {
-      createNewFlightInfoRow(flight, flightInfoDiv);
-    } else {
-      appendExistingFlightInfoRow(flight);
-    }
+export const getApiInfoFromObservableAndUpdateFlightList =
+  fetchStream$.subscribe((flightArray) => {
+    flightArray.map((flight) => {
+      const flightInfoDiv = document.getElementById("flights-info");
+      const flightButton = document.getElementById(
+        flight.icao24 + flight.callsign
+      );
+      if (!flightInfoDiv) return;
+      if (!flightButton) {
+        createNewFlightInfoRow(flight, flightInfoDiv);
+      } else {
+        appendExistingFlightInfoRow(flight);
+      }
+    });
+    minimiseLoadingScreen();
+    addEventListenerToFlightInfoButtons(flightArray);
   });
-  minimiseLoadingScreen();
-  addEventListenerToFlightInfoButtons(flightArray);
-});
 
 // Remove Old Out Of Scope Flight Info Row
 fetchStream$.subscribe((flightArray) => {

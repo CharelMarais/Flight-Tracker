@@ -1,5 +1,3 @@
-import { nonsense } from "./dom-manipulation.js";
+import { getApiInfoFromObservableAndUpdateFlightList } from "./dom-manipulation.js";
 
-// minimiseLoadingScreen();
-
-nonsense();
+getApiInfoFromObservableAndUpdateFlightList;
