@@ -1,5 +1,5 @@
 import { Observable, of, switchMap, timer } from "rxjs";
-import { concatMap, map } from "rxjs/operators";
+import { concatMap, map, catchError } from "rxjs/operators";
 import { fromFetch } from "rxjs/fetch";
 import { IFlightAPIStream, IFlights } from "../models/flight";
 
@@ -18,6 +18,14 @@ export const fetchStream$: Observable<IFlights[]> = timer(0, 30000).pipe(
             ) as IFlightAPIStream
           );
         }
+      }),
+      catchError((error) => {
+        console.error("Error fetching data:", error);
+        return of(
+          JSON.parse(
+            localStorage.getItem("flights") ?? "none"
+          ) as IFlightAPIStream
+        );
       }),
       map((result): IFlights[] => {
         localStorage.setItem("flights", JSON.stringify(result));
