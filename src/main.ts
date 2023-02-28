@@ -1,3 +1,3 @@
-import { getApiInfoFromObservableAndUpdateFlightList } from "./dom-manipulation.js";
+import { flightArraySubcription } from "./dom-manipulation.js";
 
-getApiInfoFromObservableAndUpdateFlightList;
+flightArraySubcription;
