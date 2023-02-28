@@ -1,20 +1,29 @@
 import { Observable, of, switchMap, timer } from "rxjs";
 import { concatMap, map, catchError } from "rxjs/operators";
 import { fromFetch } from "rxjs/fetch";
-import { IFlightAPIStream, IFlights } from "../models/flight";
+import { IFlightAPIStream, IFlight } from "../models/flight";
 
-export const fetchStream$: Observable<IFlights[]> = timer(0, 30000).pipe(
+export const fetchStream$: Observable<IFlight[]> = timer(0, 30000).pipe(
   concatMap(() =>
     fromFetch(
       "https://opensky-network.org/api/states/all?lamin=-35.8229&lomin=16.2562&lamax=-22.8389&lomax=33.3526"
     ).pipe(
+      // tap((response) => {
+      //   if (response.ok) {
+      //     response
+      //       .json()
+      //       .then((json) =>
+      //         localStorage.setItem("flights", JSON.stringify(json))
+      //       );
+      //   }
+      // }),
       switchMap((response) => {
         if (response.ok) {
           return response.json() as Promise<IFlightAPIStream>;
         } else {
           return of(
             JSON.parse(
-              localStorage.getItem("flights") ?? "none"
+              localStorage.getItem("flights") ?? "{time: 0, states: []}"
             ) as IFlightAPIStream
           );
         }
@@ -23,16 +32,17 @@ export const fetchStream$: Observable<IFlights[]> = timer(0, 30000).pipe(
         console.error("Error fetching data:", error);
         return of(
           JSON.parse(
-            localStorage.getItem("flights") ?? "none"
+            localStorage.getItem("flights") ?? "{time: 0, states: []}"
           ) as IFlightAPIStream
         );
       }),
-      map((result): IFlights[] => {
+      map((result) => {
+        if (!result?.states?.length) return [];
         localStorage.setItem("flights", JSON.stringify(result));
-        const flightArray = result.states.map((flightInfo): IFlights => {
-          const flight: IFlights = {
-            icao24: (flightInfo[0] as string) ?? "none",
-            callsign: (flightInfo[1] as string) || "none",
+        const flightArray = result.states.map((flightInfo): IFlight => {
+          const flight: IFlight = {
+            icao24: (flightInfo[0] as string) ?? "pvt/unk",
+            callsign: (flightInfo[1] as string) || "pvt/unk",
             origin_country: (flightInfo[2] as string) ?? "none",
             time_position: (flightInfo[3] as number) ?? 0,
             last_contact: (flightInfo[4] as number) ?? 0,

@@ -1,4 +1,4 @@
-import { IFlights } from "./models/flight";
+import { IFlight } from "./models/flight";
 import { fetchStream$ } from "./services/flight-service";
 import {
   resetMapLocationView,
@@ -10,26 +10,35 @@ import {
 } from "./utils/utils";
 
 // Sybscribe to api output and update table with new or updated info
-export const getApiInfoFromObservableAndUpdateFlightList =
-  fetchStream$.subscribe((flightArray) => {
-    flightArray.map((flight) => {
-      const flightInfoDiv = document.getElementById("flights-info");
-      const flightButton = document.getElementById(
-        flight.icao24 + flight.callsign
-      );
-      if (!flightInfoDiv) return;
-      if (!flightButton) {
-        createNewFlightInfoRow(flight, flightInfoDiv);
-      } else {
-        appendExistingFlightInfoRow(flight);
-      }
-    });
-    minimiseLoadingScreen();
-    addEventListenerToFlightInfoButtons(flightArray);
-  });
+export const flightArraySubcription = fetchStream$.subscribe((flightArray) => {
+  cleanUpFlightListData(flightArray);
+  upsertFlightListData(flightArray);
+});
 
-// Remove Old Out Of Scope Flight Info Row
-fetchStream$.subscribe((flightArray) => {
+function upsertFlightListData(flightArray: IFlight[]) {
+  flightArray.map((flight) => {
+    const flightInfoDiv = document.getElementById(
+      "flights-info"
+    ) as HTMLElement;
+    const exsitingFlightInfoRow = document.getElementById(
+      flight.icao24
+    ) as HTMLElement;
+    const flightButton = document.getElementById(
+      flight.icao24 + flight.callsign
+    ) as HTMLElement;
+
+    if (!flightInfoDiv) return;
+    if (!flightButton) {
+      flightInfoDiv.innerHTML += createNewFlightInfoRow(flight);
+    } else {
+      exsitingFlightInfoRow.innerHTML = appendExistingFlightInfoRow(flight);
+    }
+  });
+  minimiseLoadingScreen();
+  addEventListenerToFlightInfoButtons(flightArray);
+}
+
+function cleanUpFlightListData(flightArray: IFlight[]) {
   const inScopeFlightCodes: string[] = [];
   const flightInfoDivs = document.querySelectorAll(".single-flight");
 
@@ -38,17 +47,14 @@ fetchStream$.subscribe((flightArray) => {
     const inScope = inScopeFlightCodes.includes(flightRow.id);
     if (!inScope) {
       const singleFlightToRemove = document.getElementById(flightRow.id);
-      singleFlightToRemove!.remove();
+      singleFlightToRemove?.remove();
     }
   });
-});
+}
 
-function createNewFlightInfoRow(
-  flight: IFlights,
-  flightInfoDiv: HTMLElement
-): void {
-  if (!flight.icao24) return;
-  flightInfoDiv.innerHTML += `
+function createNewFlightInfoRow(flight: IFlight): string {
+  if (!flight.icao24) return "";
+  return `
   <div id="${
     flight.icao24
   }" class="single-flight grid grid-cols-4 py-1 text-[0.8rem] md:grid-cols-5 lg:grid-cols-6 xl:grid-cols-7">
@@ -70,10 +76,8 @@ function createNewFlightInfoRow(
     </div>`;
 }
 
-function appendExistingFlightInfoRow(flight: IFlights): void {
-  const exsitingFlightInfoRow = document.getElementById(flight.icao24);
-  if (!exsitingFlightInfoRow) return;
-  exsitingFlightInfoRow.innerHTML = `
+function appendExistingFlightInfoRow(flight: IFlight): string {
+  return `
     <span>${flight.callsign}</span>
       <span class="hidden xl:contents">${convertMeterPerSecondToKilomentersPerHour(
         flight.vertical_rate
@@ -92,7 +96,7 @@ function appendExistingFlightInfoRow(flight: IFlights): void {
     `;
 }
 
-export function addEventListenerToFlightInfoButtons(flights: IFlights[]): void {
+export function addEventListenerToFlightInfoButtons(flights: IFlight[]): void {
   const viewButtons = document.querySelectorAll(".track-button");
   viewButtons.forEach((button) => {
     const relInfo = flights.find(
@@ -113,18 +117,18 @@ export function minimiseLoadingScreen(): void {
   loadScreen.classList.add("loaded");
 }
 
-function toggleFlightFocus(event: MouseEvent, fltInfo: IFlights): void {
+function toggleFlightFocus(event: MouseEvent, fltInfo: IFlight): void {
   const mapElement = document.getElementById("map");
   const button = event.target as HTMLElement;
-
+  if (!mapElement) return;
   if (button.innerText === "CLOSE") {
     // If button has already been clicked
-    mapElement!.style.visibility = "hidden";
+    mapElement.style.visibility = "hidden";
     button.innerText = "track";
     resetMapLocationView();
   } else {
     // if a button is clicked
-    mapElement!.style.visibility = "visible";
+    mapElement.style.visibility = "visible";
     button.innerText = "close";
     setMapAndMarkerToCurrentFlightLocation(
       fltInfo.latitude,
@@ -132,17 +136,18 @@ function toggleFlightFocus(event: MouseEvent, fltInfo: IFlights): void {
       fltInfo.true_track
     );
   }
-  showAndHideButtonsAfterClick(button!.innerText);
+  showAndHideButtonsAfterClick(button?.innerText, button);
 }
 
-function showAndHideButtonsAfterClick(innerText: string): void {
+function showAndHideButtonsAfterClick(
+  innerText: string,
+  target: HTMLElement
+): void {
   const buttons = document.querySelectorAll(".track-button");
   buttons.forEach((button) => {
-    const eventTarget = event!.target as HTMLElement;
-    if (button.id !== eventTarget.id && innerText !== "TRACK") {
-      button.parentElement!.classList.add("hidden");
-    } else {
-      button.parentElement!.classList.remove("hidden");
-    }
+    button.parentElement?.classList.toggle(
+      "hidden",
+      button.id !== target.id && innerText !== "TRACK"
+    );
   });
 }

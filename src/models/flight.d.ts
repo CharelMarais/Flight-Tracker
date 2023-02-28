@@ -3,7 +3,7 @@ export interface IFlightAPIStream {
   states: (string | number | boolean | number[])[][];
 }
 
-export interface IFlights {
+export interface IFlight {
   icao24: string;
   callsign: string;
   origin_country: string;

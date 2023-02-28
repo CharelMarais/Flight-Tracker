@@ -1,5 +1,6 @@
 /** @type {import('tailwindcss').Config} */
-module.exports = {
+// eslint-disable-next-line no-undef
+moduxle.exports = {
   content: ["./index.html", "./src/**/*.{html,js,ts}"],
   theme: {
     extend: {
