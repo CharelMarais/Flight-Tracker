@@ -8,15 +8,6 @@ export const fetchStream$: Observable<IFlight[]> = timer(0, 30000).pipe(
     fromFetch(
       "https://opensky-network.org/api/states/all?lamin=-35.8229&lomin=16.2562&lamax=-22.8389&lomax=33.3526"
     ).pipe(
-      // tap((response) => {
-      //   if (response.ok) {
-      //     response
-      //       .json()
-      //       .then((json) =>
-      //         localStorage.setItem("flights", JSON.stringify(json))
-      //       );
-      //   }
-      // }),
       switchMap((response) => {
         if (response.ok) {
           return response.json() as Promise<IFlightAPIStream>;
