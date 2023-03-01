@@ -86,13 +86,17 @@ customElements.define("flight-info-table", FlightInfoTable);
 export const flightArraySubcription = fetchStream$.subscribe((flightArray) => {
   const shadowHost = document.querySelector("#flights-info");
   if (!shadowHost) return;
-  cleanUpFlightListData(flightArray, shadowHost);
-  upsertFlightListData(flightArray, shadowHost);
+  const shadowRoot = shadowHost.shadowRoot as ShadowRoot;
+  if (!flightArray.length) {
+    addMessageToScreenIfNoDataIsFound();
+  } else {
+  cleanUpFlightListData(flightArray, shadowRoot);
+  upsertFlightListData(flightArray, shadowRoot);
+  }
+  
 });
 
-function upsertFlightListData(flightArray: IFlight[], shadowHost: Element) {
-  const shadowRoot = shadowHost.shadowRoot as ShadowRoot;
-
+function upsertFlightListData(flightArray: IFlight[], shadowRoot: ShadowRoot) {
   flightArray.map((flight) => {
     const exsitingFlightInfoRow = shadowRoot.getElementById(
       flight.icao24
@@ -112,8 +116,7 @@ function upsertFlightListData(flightArray: IFlight[], shadowHost: Element) {
   addEventListenerToFlightInfoButtons(flightArray, shadowRoot);
 }
 
-function cleanUpFlightListData(flightArray: IFlight[], shadowHost: Element) {
-  const shadowRoot = shadowHost.shadowRoot as ShadowRoot;
+function cleanUpFlightListData(flightArray: IFlight[], shadowRoot: ShadowRoot) {
   const inScopeFlightCodes: string[] = [];
   const flightInfoDivs = shadowRoot.querySelectorAll(".single-flight");
 
@@ -187,10 +190,22 @@ function addEventListenerToFlightInfoButtons(flights: IFlight[], shadowRoot: Sha
 
 function minimiseLoadingScreen(): void {
   const loadScreen = document.getElementById("loading");
+  const loadScreenMessage = document.getElementById("loading-message");
+
+  if (loadScreenMessage) {
+    loadScreenMessage.innerHTML = ``;
+  }
 
   if (!loadScreen || loadScreen.classList.contains("loaded")) return;
   loadScreen.classList.add("animate-loadAnime");
   loadScreen.classList.add("loaded");
+}
+
+function addMessageToScreenIfNoDataIsFound() {
+  const loadScreenMessage = document.getElementById("loading-message");
+  if (loadScreenMessage) {
+    loadScreenMessage.innerHTML = `Error collecting data. Check network connection...`;
+  }
 }
 
 function toggleFlightFocus(event: MouseEvent, fltInfo: IFlight, shadowRoot: ShadowRoot): void {

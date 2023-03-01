@@ -14,7 +14,7 @@ export const fetchStream$: Observable<IFlight[]> = timer(0, 30000).pipe(
         } else {
           return of(
             JSON.parse(
-              localStorage.getItem("flights") ?? "{time: 0, states: []}"
+              localStorage.getItem("flights") ?? `{"time": 0, "states": []}`
             ) as IFlightAPIStream
           );
         }
@@ -23,7 +23,7 @@ export const fetchStream$: Observable<IFlight[]> = timer(0, 30000).pipe(
         console.error("Error fetching data:", error);
         return of(
           JSON.parse(
-            localStorage.getItem("flights") ?? "{time: 0, states: []}"
+            localStorage.getItem("flights") ?? `{"time": 0, "states": []}`
           ) as IFlightAPIStream
         );
       }),
