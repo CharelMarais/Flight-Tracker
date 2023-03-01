@@ -9,44 +9,119 @@ import {
   convertMeterPerSecondToKilomentersPerHour,
 } from "./utils/utils";
 
+class FlightInfoTable extends HTMLElement {
+  constructor() {
+  super();
+  // Create the Shadow Root
+  const shadowRoot = this.attachShadow({ mode: "open" });
+  shadowRoot.innerHTML += `
+  <style>
+    .single-flight {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      padding-top: 0.25rem;
+      padding-bottom: 0.25rem;
+      font-size: 0.8rem;
+      padding-left: 0.2rem;
+    }
+
+    .vertical-rate {
+      display: none;
+    }
+
+    .direction {
+      display: none;
+    }
+
+    .altitude {
+      display: none;
+    }
+
+    .track-button {
+      text-transform: uppercase;
+      font-weight: 700;
+      cursor: pointer;
+      border-style: none;
+      background: transparent;
+      font-size: 0.8rem;
+      color: #faf755;
+    }
+
+    @media (min-width: 480px) {
+      .single-flight {
+        grid-template-columns: repeat(5, minmax(0, 1fr));
+      }
+
+      .direction {
+        display: contents;
+      }
+    }
+
+    @media (min-width: 769px) {
+      .single-flight {
+        grid-template-columns: repeat(6, minmax(0, 1fr));
+      }
+
+      .altitude {
+        display: contents;
+      }
+    }
+
+    @media (min-width: 1024px) {
+      .single-flight {
+        grid-template-columns: repeat(7, minmax(0, 1fr));
+      }
+
+      .vertical-rate {
+        display: contents;
+      }
+    }
+  </style>`;
+  }
+}
+// Register the custom element
+customElements.define("flight-info-table", FlightInfoTable);
+
 // Sybscribe to api output and update table with new or updated info
 export const flightArraySubcription = fetchStream$.subscribe((flightArray) => {
-  cleanUpFlightListData(flightArray);
-  upsertFlightListData(flightArray);
+  const shadowHost = document.querySelector("#flights-info");
+  if (!shadowHost) return;
+  cleanUpFlightListData(flightArray, shadowHost);
+  upsertFlightListData(flightArray, shadowHost);
 });
 
-function upsertFlightListData(flightArray: IFlight[]) {
+function upsertFlightListData(flightArray: IFlight[], shadowHost: Element) {
+  const shadowRoot = shadowHost.shadowRoot as ShadowRoot;
+
   flightArray.map((flight) => {
-    const flightInfoDiv = document.getElementById(
-      "flights-info"
-    ) as HTMLElement;
-    const exsitingFlightInfoRow = document.getElementById(
+    const exsitingFlightInfoRow = shadowRoot.getElementById(
       flight.icao24
     ) as HTMLElement;
-    const flightButton = document.getElementById(
+    const flightButton = shadowRoot.getElementById(
       flight.icao24 + flight.callsign
     ) as HTMLElement;
 
-    if (!flightInfoDiv) return;
+    if (!shadowRoot) return;
     if (!flightButton) {
-      flightInfoDiv.innerHTML += createNewFlightInfoRow(flight);
+      shadowRoot.innerHTML += createNewFlightInfoRow(flight);
     } else {
       exsitingFlightInfoRow.innerHTML = appendExistingFlightInfoRow(flight);
     }
   });
   minimiseLoadingScreen();
-  addEventListenerToFlightInfoButtons(flightArray);
+  addEventListenerToFlightInfoButtons(flightArray, shadowRoot);
 }
 
-function cleanUpFlightListData(flightArray: IFlight[]) {
+function cleanUpFlightListData(flightArray: IFlight[], shadowHost: Element) {
+  const shadowRoot = shadowHost.shadowRoot as ShadowRoot;
   const inScopeFlightCodes: string[] = [];
-  const flightInfoDivs = document.querySelectorAll(".single-flight");
+  const flightInfoDivs = shadowRoot.querySelectorAll(".single-flight");
 
   flightArray.map((flight) => inScopeFlightCodes.push(flight.icao24));
   flightInfoDivs.forEach((flightRow) => {
     const inScope = inScopeFlightCodes.includes(flightRow.id);
     if (!inScope) {
-      const singleFlightToRemove = document.getElementById(flightRow.id);
+      const singleFlightToRemove = shadowRoot.getElementById(flightRow.id);
       singleFlightToRemove?.remove();
     }
   });
@@ -57,59 +132,60 @@ function createNewFlightInfoRow(flight: IFlight): string {
   return `
   <div id="${
     flight.icao24
-  }" class="single-flight grid grid-cols-4 py-1 text-[0.8rem] md:grid-cols-5 lg:grid-cols-6 xl:grid-cols-7">
+  }" class="single-flight">
       <span>${flight.callsign}</span>
-      <span class="hidden xl:contents">${convertMeterPerSecondToKilomentersPerHour(
+      <span class="vertical-rate">${convertMeterPerSecondToKilomentersPerHour(
         flight.vertical_rate
       )}km/h</span>
       <span>${convertMeterPerSecondToKilomentersPerHour(
         flight.velocity
       )}km/h</span>
-      <span class="hidden md:contents">${calculateDirection(
+      <span class="direction">${calculateDirection(
         flight.true_track
       )}</span>
       <span>${flight.true_track}°</span>
-      <span class="hidden lg:contents">${flight.baro_altitude}m</span>
+      <span class="altitude">${flight.baro_altitude}m</span>
       <button id="${
         flight.icao24 + flight.callsign
-      }" class="track-button uppercase font-bold cursor-pointer border-none">track</button> 
+      }" class="track-button">track</button> 
     </div>`;
 }
 
 function appendExistingFlightInfoRow(flight: IFlight): string {
   return `
-    <span>${flight.callsign}</span>
-      <span class="hidden xl:contents">${convertMeterPerSecondToKilomentersPerHour(
-        flight.vertical_rate
-      )}km/h</span>
-      <span>${convertMeterPerSecondToKilomentersPerHour(
-        flight.velocity
-      )}km/h</span>
-      <span class="hidden md:contents">${calculateDirection(
-        flight.true_track
-      )}</span>
-      <span>${flight.true_track}°</span>
-      <span class="hidden lg:contents">${flight.baro_altitude}m</span>
-      <button id="${
-        flight.icao24 + flight.callsign
-      }" class="track-button uppercase">track</button> 
+  <span>${flight.callsign}</span>
+  <span class="vertical-rate">${convertMeterPerSecondToKilomentersPerHour(
+    flight.vertical_rate
+  )}km/h</span>
+  <span>${convertMeterPerSecondToKilomentersPerHour(
+    flight.velocity
+  )}km/h</span>
+  <span class="direction">${calculateDirection(
+    flight.true_track
+  )}</span>
+  <span>${flight.true_track}°</span>
+  <span class="altitude">${flight.baro_altitude}m</span>
+  <button id="${
+    flight.icao24 + flight.callsign
+  }" class="track-button">track</button> 
     `;
 }
 
-export function addEventListenerToFlightInfoButtons(flights: IFlight[]): void {
-  const viewButtons = document.querySelectorAll(".track-button");
-  viewButtons.forEach((button) => {
+function addEventListenerToFlightInfoButtons(flights: IFlight[], shadowRoot: ShadowRoot): void {
+  const viewButtons = shadowRoot.querySelectorAll(".track-button");
+  viewButtons?.forEach((button) => {
+    
     const relInfo = flights.find(
       (flight) => flight.icao24 + flight.callsign === button.id
     );
     if (!relInfo) return;
-    button.addEventListener("click", () => {
-      toggleFlightFocus(event as MouseEvent, relInfo);
+    button.addEventListener("click", (event) => {
+      toggleFlightFocus(event as MouseEvent, relInfo, shadowRoot);
     });
   });
 }
 
-export function minimiseLoadingScreen(): void {
+function minimiseLoadingScreen(): void {
   const loadScreen = document.getElementById("loading");
 
   if (!loadScreen || loadScreen.classList.contains("loaded")) return;
@@ -117,7 +193,7 @@ export function minimiseLoadingScreen(): void {
   loadScreen.classList.add("loaded");
 }
 
-function toggleFlightFocus(event: MouseEvent, fltInfo: IFlight): void {
+function toggleFlightFocus(event: MouseEvent, fltInfo: IFlight, shadowRoot: ShadowRoot): void {
   const mapElement = document.getElementById("map");
   const button = event.target as HTMLElement;
   if (!mapElement) return;
@@ -136,18 +212,21 @@ function toggleFlightFocus(event: MouseEvent, fltInfo: IFlight): void {
       fltInfo.true_track
     );
   }
-  showAndHideButtonsAfterClick(button?.innerText, button);
+  showAndHideButtonsAfterClick(button?.innerText, button, shadowRoot);
 }
 
 function showAndHideButtonsAfterClick(
   innerText: string,
-  target: HTMLElement
+  target: HTMLElement,
+  shadowRoot: ShadowRoot
 ): void {
-  const buttons = document.querySelectorAll(".track-button");
+  const buttons = shadowRoot.querySelectorAll(".track-button");
   buttons.forEach((button) => {
-    button.parentElement?.classList.toggle(
-      "hidden",
-      button.id !== target.id && innerText !== "TRACK"
-    );
+    if (!button.parentElement) return;
+    if (button.id !== target.id && innerText !== "TRACK") {
+      button.parentElement.style.display = "none";
+    } else {
+      button.parentElement.style.display = "grid";
+    }
   });
 }
