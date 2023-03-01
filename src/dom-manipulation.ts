@@ -190,6 +190,11 @@ function addEventListenerToFlightInfoButtons(flights: IFlight[], shadowRoot: Sha
 
 function minimiseLoadingScreen(): void {
   const loadScreen = document.getElementById("loading");
+  const loadScreenMessage = document.getElementById("loading-message");
+
+  if (loadScreenMessage) {
+    loadScreenMessage.innerHTML = ``;
+  }
 
   if (!loadScreen || loadScreen.classList.contains("loaded")) return;
   loadScreen.classList.add("animate-loadAnime");
