@@ -1,4 +1,4 @@
-import { Observable, of, switchMap, timer } from "rxjs";
+import { BehaviorSubject, Observable, of, switchMap, timer } from "rxjs";
 import { concatMap, map, catchError } from "rxjs/operators";
 import { fromFetch } from "rxjs/fetch";
 import { IFlightAPIStream, IFlight } from "../models/flight";
@@ -27,10 +27,10 @@ export const fetchStream$: Observable<IFlight[]> = timer(0, 30000).pipe(
           ) as IFlightAPIStream
         );
       }),
-      map((result) => {
+      map((result: IFlightAPIStream) => {
         if (!result?.states?.length) return [];
         localStorage.setItem("flights", JSON.stringify(result));
-        const flightArray = result.states.map((flightInfo): IFlight => {
+        const flightArray: IFlight[] = result.states.map((flightInfo): IFlight => {
           const flight: IFlight = {
             icao24: (flightInfo[0] as string) ?? "pvt/unk",
             callsign: (flightInfo[1] as string) || "pvt/unk",
@@ -58,3 +58,5 @@ export const fetchStream$: Observable<IFlight[]> = timer(0, 30000).pipe(
     )
   )
 );
+
+export const selectedFlightIcoa24$: BehaviorSubject<string> = new BehaviorSubject("");
