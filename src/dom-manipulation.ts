@@ -1,5 +1,6 @@
+import { combineLatestWith } from "rxjs";
 import { IFlight } from "./models/flight";
-import { fetchStream$ } from "./services/flight-service";
+import { fetchStream$, selectedFlightIcoa24$} from "./services/flight-service";
 import {
   resetMapLocationView,
   setMapAndMarkerToCurrentFlightLocation,
@@ -8,6 +9,7 @@ import {
   calculateDirection,
   convertMeterPerSecondToKilomentersPerHour,
 } from "./utils/utils";
+
 
 class FlightInfoTable extends HTMLElement {
   constructor() {
@@ -83,18 +85,56 @@ class FlightInfoTable extends HTMLElement {
 customElements.define("flight-info-table", FlightInfoTable);
 
 // Sybscribe to api output and update table with new or updated info
-export const flightArraySubcription = fetchStream$.subscribe((flightArray) => {
+export const flightArraySubcription = fetchStream$.pipe(combineLatestWith(selectedFlightIcoa24$))
+.subscribe(([flightArray, selectedFlight]: [IFlight[], string]) => {
   const shadowHost = document.querySelector("#flights-info");
   if (!shadowHost) return;
   const shadowRoot = shadowHost.shadowRoot as ShadowRoot;
   if (!flightArray.length) {
     addMessageToScreenIfNoDataIsFound();
-  } else {
+  } else if (!selectedFlight){
   cleanUpFlightListData(flightArray, shadowRoot);
   upsertFlightListData(flightArray, shadowRoot);
+  } else {
+    updateSelectedFlightInfo(flightArray, selectedFlight, shadowRoot)
   }
   
 });
+
+function updateSelectedFlightInfo(flightArray: IFlight[], selectedFlight: string, shadowRoot: ShadowRoot) {
+  const selectedFlightInfo: IFlight | undefined = flightArray.find((flight: { icao24: string; }) => flight.icao24 === selectedFlight)
+  if(!selectedFlightInfo) return;
+  const selectedFlightInfoRow = shadowRoot.getElementById(
+    selectedFlightInfo.icao24
+  ) as HTMLElement;
+
+  const verticalRateElement = selectedFlightInfoRow.querySelector(".vertical-rate");
+  const velocityElement = selectedFlightInfoRow.querySelector(".velocity");
+  const directionElement = selectedFlightInfoRow.querySelector(".direction");
+  const headingElement = selectedFlightInfoRow.querySelector(".heading");
+  const altitudeElement = selectedFlightInfoRow.querySelector(".altitude");
+
+  if (!verticalRateElement || !velocityElement || !directionElement || !headingElement || !altitudeElement) return;
+  verticalRateElement.innerHTML = `${convertMeterPerSecondToKilomentersPerHour(
+    selectedFlightInfo.vertical_rate
+  )}km/h`
+  velocityElement.innerHTML = `${convertMeterPerSecondToKilomentersPerHour(
+    selectedFlightInfo.velocity
+  )}km/h`
+  directionElement.innerHTML = `${calculateDirection(
+    selectedFlightInfo.true_track
+  )}`
+  headingElement.innerHTML = `${selectedFlightInfo.true_track}°`
+  altitudeElement.innerHTML = `${selectedFlightInfo.baro_altitude}m`
+  
+  setMapAndMarkerToCurrentFlightLocation(
+    selectedFlightInfo.latitude,
+    selectedFlightInfo.longitude,
+    selectedFlightInfo.true_track
+  );
+}
+
+
 
 function upsertFlightListData(flightArray: IFlight[], shadowRoot: ShadowRoot) {
   flightArray.map((flight) => {
@@ -136,17 +176,17 @@ function createNewFlightInfoRow(flight: IFlight): string {
   <div id="${
     flight.icao24
   }" class="single-flight">
-      <span>${flight.callsign}</span>
+      <span class="callsign">${flight.callsign}</span>
       <span class="vertical-rate">${convertMeterPerSecondToKilomentersPerHour(
         flight.vertical_rate
       )}km/h</span>
-      <span>${convertMeterPerSecondToKilomentersPerHour(
+      <span class="velocity">${convertMeterPerSecondToKilomentersPerHour(
         flight.velocity
       )}km/h</span>
       <span class="direction">${calculateDirection(
         flight.true_track
       )}</span>
-      <span>${flight.true_track}°</span>
+      <span class="heading">${flight.true_track}°</span>
       <span class="altitude">${flight.baro_altitude}m</span>
       <button id="${
         flight.icao24 + flight.callsign
@@ -156,17 +196,17 @@ function createNewFlightInfoRow(flight: IFlight): string {
 
 function appendExistingFlightInfoRow(flight: IFlight): string {
   return `
-  <span>${flight.callsign}</span>
+  <span class="callsign">${flight.callsign}</span>
   <span class="vertical-rate">${convertMeterPerSecondToKilomentersPerHour(
     flight.vertical_rate
   )}km/h</span>
-  <span>${convertMeterPerSecondToKilomentersPerHour(
+  <span class="velocity">${convertMeterPerSecondToKilomentersPerHour(
     flight.velocity
   )}km/h</span>
   <span class="direction">${calculateDirection(
     flight.true_track
   )}</span>
-  <span>${flight.true_track}°</span>
+  <span class="heading">${flight.true_track}°</span>
   <span class="altitude">${flight.baro_altitude}m</span>
   <button id="${
     flight.icao24 + flight.callsign
@@ -208,15 +248,19 @@ function addMessageToScreenIfNoDataIsFound() {
   }
 }
 
-function toggleFlightFocus(event: MouseEvent, fltInfo: IFlight, shadowRoot: ShadowRoot): void {
+export function toggleFlightFocus(event: MouseEvent, fltInfo: IFlight, shadowRoot: ShadowRoot): void {
   const mapElement = document.getElementById("map");
   const button = event.target as HTMLElement;
-  if (!mapElement) return;
+
+
+
+  if (mapElement) {
   if (button.innerText === "CLOSE") {
     // If button has already been clicked
     mapElement.style.visibility = "hidden";
     button.innerText = "track";
     resetMapLocationView();
+    selectedFlightIcoa24$.next('');
   } else {
     // if a button is clicked
     mapElement.style.visibility = "visible";
@@ -226,8 +270,10 @@ function toggleFlightFocus(event: MouseEvent, fltInfo: IFlight, shadowRoot: Shad
       fltInfo.longitude,
       fltInfo.true_track
     );
+    selectedFlightIcoa24$.next(fltInfo.icao24);
   }
   showAndHideButtonsAfterClick(button?.innerText, button, shadowRoot);
+  }
 }
 
 function showAndHideButtonsAfterClick(
@@ -238,7 +284,7 @@ function showAndHideButtonsAfterClick(
   const buttons = shadowRoot.querySelectorAll(".track-button");
   buttons.forEach((button) => {
     if (!button.parentElement) return;
-    if (button.id !== target.id && innerText !== "TRACK") {
+    if (button.id !== target.id && innerText !== "track") {
       button.parentElement.style.display = "none";
     } else {
       button.parentElement.style.display = "grid";
