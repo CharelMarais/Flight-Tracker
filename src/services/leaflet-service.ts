@@ -45,5 +45,5 @@ export function setMapAndMarkerToCurrentFlightLocation(
 ): void {
   map.flyTo([lat, lon], 10);
   marker.setLatLng([lat, lon]);
-  planeIcon.style.transform = `rotate(${heading - 90}deg)`;
+  planeIcon.style.transform = `rotate(${heading}deg)`;
 }
