@@ -1,4 +1,4 @@
-export function calculateDirection(deg) {
+export function calculateDirection(deg: number): string {
   switch (true) {
     case deg < 11.25:
       return "N";
@@ -32,11 +32,11 @@ export function calculateDirection(deg) {
       return "NW";
     case deg < 348.75:
       return "NNW";
-    case deg < 360:
+    default:
       return "N";
   }
 }
 
-export function convertMeterPerSecondToKilomentersPerHour(mps) {
+export function convertMeterPerSecondToKilomentersPerHour(mps: number): number {
   return Math.round(mps * 3.6);
 }
