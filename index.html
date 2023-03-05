@@ -8,7 +8,7 @@
       href="./assets/img/icons8-plane-24.png"
     />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link href="./dist/styles.css" rel="stylesheet" />
+    <link href="./src/styles.css" rel="stylesheet" />
     <title>Flight Track</title>
   </head>
   <body
@@ -16,7 +16,7 @@
   >
     <div
       id="loading"
-      class="absolute top-0 left-0 flex h-full w-full items-center justify-center bg-primary flex flex-col"
+      class="absolute top-0 left-0 flex h-full w-full flex-col items-center justify-center bg-primary"
     >
       <div class="spinner grid h-44 w-44 content-center justify-center">
         <svg
@@ -48,7 +48,7 @@
           ></path>
         </svg>
       </div>
-      <div id="loading-message" class=" bg-primary text-center"></div>
+      <div id="loading-message" class="bg-primary text-center"></div>
     </div>
     <div id="container" class="flex h-full flex-col content-start">
       <header class="heading m-0 flex h-fit bg-primary p-0">

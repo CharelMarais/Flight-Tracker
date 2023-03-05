@@ -1,6 +1,6 @@
 /** @type {import('tailwindcss').Config} */
 // eslint-disable-next-line no-undef
-moduxle.exports = {
+module.exports = {
   content: ["./index.html", "./src/**/*.{html,js,ts}"],
   theme: {
     extend: {
@@ -40,13 +40,14 @@ moduxle.exports = {
         xl: "1024px",
       },
       colors: {
-        "secondary": "#00539cff",
-        "primary": "#21447f",
+        secondary: "#00539cff",
+        primary: "#21447f",
         "screen-bg-color": "#36312e",
         "screen-border-color": "#171214",
         "screen-font-color": "#faf755",
       },
     },
   },
+
   plugins: [],
 };
