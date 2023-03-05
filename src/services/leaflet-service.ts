@@ -5,7 +5,22 @@ export const map: Map = L.map("map").setView([-35, 25], 2);
 
 const planeIcon = document.createElement("div") as HTMLElement;
 planeIcon.id = "plane-icon";
-planeIcon.innerHTML = `<img src="../../assets/img/icons8-plane-24.png" alt="plane icon">`;
+planeIcon.innerHTML = `
+<svg
+class="loading-plane text-secondary text-[2rem]"
+stroke="currentColor"
+fill="currentColor"
+stroke-width="0"
+viewBox="0 0 512 512"
+height="1em"
+width="1em"
+xmlns="http://www.w3.org/2000/svg"
+>
+<path
+  d="M448 336v-40L288 192V79.2c0-17.7-14.8-31.2-32-31.2s-32 13.5-32 31.2V192L64 296v40l160-48v113.6l-48 31.2V464l80-16 80 16v-31.2l-48-31.2V288l160 48z"
+></path>
+</svg>
+`;
 const divIcon = L.divIcon({
   html: planeIcon,
   iconSize: [24, 24],
