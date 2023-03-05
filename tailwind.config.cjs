@@ -40,8 +40,8 @@ moduxle.exports = {
         xl: "1024px",
       },
       colors: {
-        "secondary-bg-color": "#00539cff",
-        "primary-bg-color": "#21447f",
+        "secondary": "#00539cff",
+        "primary": "#21447f",
         "screen-bg-color": "#36312e",
         "screen-border-color": "#171214",
         "screen-font-color": "#faf755",
